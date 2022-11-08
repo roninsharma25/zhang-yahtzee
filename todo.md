@@ -1,0 +1,6 @@
+- block level diagram - what do we pass between steps
+- OI analysis to determine the most compute intensive part of the algorithm
+- buffering, data reuse - how much buffering do we need per step/module
+- Resolution of the image
+- complete synthesizable baseline design
+- divide up work
