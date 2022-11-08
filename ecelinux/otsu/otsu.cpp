@@ -51,7 +51,7 @@ int otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
 
         // Minimize intra-class variance = maximize inter-class variance
         variance = q1 * q2 * pow(mu1 - mu2, 2);
-        
+
         if (variance > max_variance) {
             threshold = i;
             max_variance = variance;
@@ -61,7 +61,7 @@ int otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
     // Perform thresholding
     for (int i = 0; i < NUM_PIXELS; i++) {
         if (input_image[i] > threshold) {
-            output_image[i] = 1;
+            output_image[i] = 255;
         } else {
             output_image[i] = 0;
         }

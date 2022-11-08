@@ -37,7 +37,7 @@ int main() {
     int threshold = otsu(combined_input_array, combined_output_array);
 
     current_index = 0;
-    // Write the output to the output image
+    // Write the output to the output image array
     for (int r = 0; r < ROW; r++) {
         for (int c = 0; c < COL; c++) {
           output_image_array[r][c] = combined_output_array[current_index];
@@ -45,12 +45,19 @@ int main() {
         }
     }
 
+    ofstream out("outputfile.txt");
+
     std::cout << "Output Array" << "\n";
     for (int r = 0; r < ROW; r++) {
         for (int c = 0; c < COL; c++) {
           std::cout << output_image_array[r][c] << "\n";
+          out << output_image_array[r][c] << " ";
         }
+        out << "\n";
     }
+    out.close();
+
+    
 
     std::cout << "Threshold" << "\n";
     std::cout << threshold << "\n";
