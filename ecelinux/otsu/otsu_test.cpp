@@ -2,19 +2,65 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
 #include "otsu.h"
 
 using namespace std;
 
 int main() {
-    int arr1[5] = {0, 1, 2, 3, 4};
-    int arr2[5] = {0, 0, 0, 0, 0};
-    otsu(arr1, arr2);
 
-    for (int i = 0; i < 5; i++) {
-        std::cout << arr2[i] << "\n";
+    ifstream inputfile("test.txt");
+    int input_image_array[ROW][COL]; // NEED TO CONVERT THE STRING TO AN INT
+    int output_image_array[ROW][COL];
+
+    for (int r = 0; r < ROW; r++) {
+        for (int c = 0; c < COL; c++) {
+          inputfile >> input_image_array[r][c];
+        }
     }
+
+    for (int r = 0; r < ROW; r++) {
+        for (int c = 0; c < COL; c++) {
+          std::cout << input_image_array[r][c] << "\n";
+        }
+    }
+
+    int combined_input_array[ROW * COL];
+    int combined_output_array[ROW * COL];
+    int current_index = 0;
+    for (int r = 0; r < ROW; r++) {
+        for (int c = 0; c < COL; c++) {
+          combined_input_array[current_index] = input_image_array[r][c];
+          current_index++;
+        }
+    }
+
+    int threshold = otsu(combined_input_array, combined_output_array);
+
+    current_index = 0;
+    // Write the output to the output image array
+    for (int r = 0; r < ROW; r++) {
+        for (int c = 0; c < COL; c++) {
+          output_image_array[r][c] = combined_output_array[current_index];
+          current_index++;
+        }
+    }
+
+    ofstream out("outputfile.txt");
+
+    std::cout << "Output Array" << "\n";
+    for (int r = 0; r < ROW; r++) {
+        for (int c = 0; c < COL; c++) {
+          std::cout << output_image_array[r][c] << "\n";
+          out << output_image_array[r][c] << " ";
+        }
+        out << "\n";
+    }
+    out.close();
+
+    
+
+    std::cout << "Threshold" << "\n";
+    std::cout << threshold << "\n";
 
     std::cout << "Done" << std::endl;
 
