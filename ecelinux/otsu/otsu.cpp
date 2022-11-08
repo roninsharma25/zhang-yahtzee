@@ -1,8 +1,11 @@
 #include<cmath>
+#include <stdio.h>
+#include <iostream>
 #include "otsu.h"
 
 // https://www.ipol.im/pub/art/2016/158/article_lr.pdf
 
+using namespace std;
 
 // LARGEST PIXEL VALUE CURRENTLY SET TO 255
 int threshold;
@@ -17,7 +20,7 @@ float weighted_sum, intermediate_sum, q1, q2, mu1, mu2, variance, max_variance;
 // mu2: mean of class 2
 // variance: inter-class variance
 
-void otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
+int otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
     // Create the empty histogram - bins for each pixel value
     int histogram[255];
 
@@ -39,7 +42,8 @@ void otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
     for (int i = 0; i < 255; i++) {
         q1 += histogram[i];
         if (q1 == 0) continue;
-        q2 = 255 - q1;
+        q2 = NUM_PIXELS - q1;
+        if (q2 == 0) continue;
 
         intermediate_sum += i * histogram[i];
         mu1 = intermediate_sum / q1;
@@ -47,7 +51,7 @@ void otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
 
         // Minimize intra-class variance = maximize inter-class variance
         variance = q1 * q2 * pow(mu1 - mu2, 2);
-
+        
         if (variance > max_variance) {
             threshold = i;
             max_variance = variance;
@@ -62,4 +66,6 @@ void otsu(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS]) {
             output_image[i] = 0;
         }
     }
+
+    return threshold;
 }
