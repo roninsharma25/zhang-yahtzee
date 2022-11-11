@@ -4,18 +4,26 @@ import sys
 
 np.set_printoptions(threshold=sys.maxsize)
 
-img = Image.open( 'assets/dice.png' )
+img = Image.open( 'assets/dice.png' ).convert('L')
 img.load()
 data = np.asarray( img, dtype="int32" )
+print('DATA')
 
-hex_array = [["0x"]*data.shape[1]]*data.shape[0]
+print(data)
 
-for x in range(data.shape[0]):
-    for y in range(data.shape[1]):
-        for z in data[x][y]:
-            temp = hex_array[x][y] + hex(z).lstrip("0x")
-            hex_array[x][y] = temp    
-    break
+hex_array = []
+
+for col in data:
+    temp = []
+    for i in range(len(col)):
+        if (len(temp) < 4):
+            temp.append(hex(col[i])[2:])
+        else:
+            hex_array.append('0x' + ''.join(temp))
+            temp = []
+
+print(hex_array)
+
 
 original_stdout = sys.stdout # Save a reference to the original standard output
 with open('filename.txt', 'w') as f:
@@ -27,5 +35,4 @@ with open('filename.txt', 'w') as f:
 with open('output_formatted.txt', 'w') as f:
     f.write(str(data.shape[0]) + ',' + str(data.shape[1]) + '\n')
     for row in hex_array:
-        for val in row:
-            f.write(val + '\n')
+        f.write(row + '\n')
