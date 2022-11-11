@@ -12,6 +12,7 @@ print('DATA')
 print(data)
 
 hex_array = []
+count = 0
 
 for col in data:
     temp = []
@@ -21,6 +22,9 @@ for col in data:
         else:
             hex_array.append('0x' + ''.join(temp))
             temp = []
+            temp.append(hex(col[i])[2:])
+        count += 1
+    hex_array.append('0x' + ''.join(temp))
 
 print(hex_array)
 
@@ -36,3 +40,8 @@ with open('output_formatted.txt', 'w') as f:
     f.write(str(data.shape[0]) + ',' + str(data.shape[1]) + '\n')
     for row in hex_array:
         f.write(row + '\n')
+
+print('COUNT:', count)
+print(len(hex_array))
+
+print(data.shape)
