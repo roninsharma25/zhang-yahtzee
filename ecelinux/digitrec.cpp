@@ -10,6 +10,10 @@
 // Top function
 //----------------------------------------------------------
 
+int first = 1;
+int histogram[256];
+int count = 0;
+
 void dut(
     hls::stream<bit32_t> &strm_in,
     hls::stream<pixel> &strm_out
@@ -21,6 +25,13 @@ void dut(
 
   digit test_digit;
   digit result;
+  
+  if(first){
+    for (int i = 0; i < 256; i++){
+      histogram[i] = 0;
+    }
+    first = 0;
+  }
 
   // ------------------------------------------------------
   // Input processing
@@ -30,23 +41,36 @@ void dut(
   // Set digit properly
   test_digit(31, 0) = input_lo;
 
-  int histogram[256];
-  for (int i = 0; i < 256; i++){
-    histogram[i] = 0;
-  }
+
 
   // Update the histogram
   update_histogram(test_digit, histogram);
+  
+
+  // printf("histogram: [");
+  //   for(int i = 0; i < 256; i++){
+  //     printf(" %d ", histogram[i]);
+  //   }
+  // printf("]");
 
   // Invoke Otsu's algorithm
   // hls::stream<bit32_t> &otsu;
-  pixel threshold = otsu(histogram);
+  count++;
+
 
 
   // printf("awooga %d, %d\n", input_lo.to_int(), result.to_int() );
   
   // Write out the interpreted digit
-  strm_out.write(threshold);
+  if(count >= 2800){
+    printf("histogram: [");
+      for(int i = 0; i < 256; i++){
+        printf("%d,", histogram[i]);
+      }
+    printf("]");
+    pixel threshold = otsu(histogram);
+    strm_out.write(threshold);
+  }
 
 }
 

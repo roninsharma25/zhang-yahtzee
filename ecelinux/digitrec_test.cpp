@@ -42,7 +42,7 @@ int main()
   hls::stream<pixel> digitrec_out;
 
   // Number of test instances
-  const int N = 2200;
+  const int N = 2800;
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
@@ -79,7 +79,7 @@ int main()
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
-      printf("ayaya %d\n", input_lo.to_int());
+      //printf("ayaya %d\n", input_lo.to_int());
       // Write words to the device
       digitrec_in.write( input_lo );
     }
@@ -98,8 +98,7 @@ int main()
     }   
 
     pixel interpreted_digit = digitrec_out.read();
-    printf("yeye %d \n", interpreted_digit.to_int());
-    
+    printf("yeye %d, %d \n", interpreted_digit.to_int(), num_test_insts);
     timer.stop();
     
     // Close input file for the testing set

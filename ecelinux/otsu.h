@@ -1,6 +1,6 @@
 
 #ifndef NUM_PIXELS
-#define NUM_PIXELS 15
+#define NUM_PIXELS 11200
 #endif
 
 #ifndef ROW

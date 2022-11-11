@@ -34,12 +34,12 @@ void update_histogram(bit32_t pixel_value, int histogram[]) {
 pixel otsu(int histogram[]) {
 
     // Calculate the weighted sum of all bins
-    for (int i = 0; i < 255; i++) {
+    for (int i = 0; i < 256; i++) {
         weighted_sum += i * histogram[i];
     }
 
     // Calculate variances
-    for (int i = 0; i < 255; i++) {
+    for (int i = 0; i < 256; i++) {
         q1 += histogram[i];
         if (q1 == 0) continue;
         q2 = NUM_PIXELS - q1;
@@ -52,7 +52,7 @@ pixel otsu(int histogram[]) {
         // Minimize intra-class variance = maximize inter-class variance
         variance = q1 * q2 * pow(mu1 - mu2, 2);
 
-        if (variance > max_variance) {
+        if (variance >= max_variance) {
             threshold = i;
             max_variance = variance;
         }
