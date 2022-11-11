@@ -31,22 +31,21 @@ int main()
 {
   // Output file that saves the test bench results
   std::ofstream outfile;
-  outfile.open("out.dat");
+  outfile.open("output/out_output_formatted.txt");
   
   // Read input file for the testing set
   std::string line;
-  std::ifstream myfile ("data/testing_set.dat");
+  std::ifstream myfile ("data/output_formatted.txt");
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> digitrec_in;
-  hls::stream<bit32_t> digitrec_out;
+  hls::stream<pixel> digitrec_out;
 
   // Number of test instances
-  const int N = 180;
+  const int N = 2200;
   
   // Arrays to store test data and expected results
-  digit inputs[N];
-  int   expecteds[N];
+  bit32_t inputs[N];
 
   // Timer
   Timer timer("digitrec FPGA");
@@ -62,19 +61,14 @@ int main()
     //--------------------------------------------------------------------
     // Read data from the input file into two arrays
     //--------------------------------------------------------------------
+    assert( std::getline( myfile, line) );
     for (int i = 0; i < N; ++i) {
       assert( std::getline( myfile, line) );
       // Read handwritten digit input
-      std::string hex_digit = line.substr(2, line.find(",")-2);
-      digit input_digit = hexstring_to_int64 (hex_digit);
-      // Read expected digit
-      int input_value =
-          strtoul(line.substr(line.find(",") + 1,
-                              line.length()).c_str(), NULL, 10);
-   
+      std::string hex_digit = line.substr(2);
+      bit32_t input_digit = hexstring_to_int64 (hex_digit);
       // Store the digits into arrays
       inputs[i] = input_digit;
-      expecteds[i] = input_value;
     }
 
     timer.start();
@@ -85,11 +79,9 @@ int main()
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
-      bit32_t input_hi = inputs[i].range(48,32);
-
+      printf("ayaya %d\n", input_lo.to_int());
       // Write words to the device
       digitrec_in.write( input_lo );
-      digitrec_in.write( input_hi );
     }
 
     //--------------------------------------------------------------------
@@ -100,27 +92,15 @@ int main()
       dut( digitrec_in, digitrec_out );
 
       // Read result
-      bit32_t interpreted_digit = digitrec_out.read();
-
+      
       num_test_insts++;
       
-      // Check for any difference between k-NN interpreted digit vs. expected digit
-      if ( interpreted_digit != expecteds[i] ) {
-        error++;
-      }
     }   
+
+    pixel interpreted_digit = digitrec_out.read();
+    printf("yeye %d \n", interpreted_digit.to_int());
     
     timer.stop();
-    
-    // Report overall error out of all testing instances
-    std::cout << "Number of test instances = " << num_test_insts << std::endl;
-    std::cout << "Overall Error Rate = " << std::setprecision(3)
-              << ( (double)error / num_test_insts ) * 100
-              << "%" << std::endl;
-    outfile << "Number of test instances = " << num_test_insts << std::endl;
-    outfile << "Overall Error Rate = " << std::setprecision(3)
-            << ( (double) error / num_test_insts ) * 100 
-            << "%" << std::endl;
     
     // Close input file for the testing set
     myfile.close();

@@ -10,6 +10,7 @@
 
 #include "typedefs.h"
 #include "training_data.h"
+#include "otsu.h"
 
 // The K_CONST value: number of nearest neighbors
 #define K_CONST 3
@@ -17,7 +18,7 @@
 // Top function for synthesis
 void dut(
     hls::stream<bit32_t> &strm_in,
-    hls::stream<bit32_t> &strm_out
+    hls::stream<pixel> &strm_out
 );
 
 // Top function for digit recognition
