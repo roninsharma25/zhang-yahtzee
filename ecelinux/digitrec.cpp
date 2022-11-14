@@ -68,8 +68,10 @@ void dut(
     }
   } else {
     bit threshold_bit;
-    threshold_bit = threshold_image(input_lo, threshold_value);
-    strm_out.write(threshold_bit);
+    for(int i = 0; i < 4; i++){
+      threshold_bit = threshold_image(input_lo, threshold_value);
+      strm_out.write(threshold_bit);
+    }
   }
   
 
