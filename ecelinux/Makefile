@@ -16,7 +16,7 @@ CFLAGS = -g -I${VHLS_INC}
 
 all: csim
 
-csim: digitrec.cpp digitrec_test.cpp
+csim: digitrec.cpp digitrec_test.cpp otsu.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
 	g++ ${CFLAGS} $^ -o digitrec -lrt
 	./digitrec
