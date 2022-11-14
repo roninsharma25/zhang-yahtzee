@@ -24,33 +24,106 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
         int above = x+ (width)*(y-1);
         int left = x-1 + width*y;
         int diag = x-1 + (width)*(y-1);//12
+        int diag2 = x+1 + (width)*(y-1);
         int A = y == 0? 0: input_image[above];
         int B = x== 0? 0: input_image[left];
         int C = ((x==0)||(y==0))?0: input_image[diag];//8
-        if(A == 0 && B == 0 && C== 0){//6
+        int D = ((x==width-1)||(y==0))?0: input_image[diag2];
+        if(A == 0 && B == 0 && C== 0 && D==0){//6
           output_image[index] = labelNo;
           un_class[labelNo] = labelNo;
+          printf("new class");
           labelNo++;
           //assert (labelNo<20);
         }
-        else if(A == 1 && B ==1 && C == 1){//12
+        else{
           int labelA = output_image[above];
           int labelB = output_image[left];
           int labelC = output_image[diag];
-          if((labelA <= labelB) && (labelA <= labelC)){
+          int labelD = output_image[diag2];
+          if((A==1)&&((labelA<=labelB)||B == 0) && ((labelA<=labelC)||C==0)&&((labelA<=labelD)||D==0)){
+            printf("above\n");
+            output_image[index] = labelA;
+            if(B){
+              un_class[labelB] = labelA;
+            }
+            if(C){
+              un_class[labelC] = labelA;
+            }
+            if(D){
+               un_class[labelD] = labelA;
+            }
+          }
+          else if((B==1)&&((labelB<=labelA)||A == 0) && ((labelB<=labelC)||C==0)&&((labelB<=labelD)||D==0)){
+            printf("left\n");
+            output_image[index] = labelB;
+            if(A){
+              un_class[labelA] = labelB;
+            }
+            if(C){
+              un_class[labelC] = labelB;
+            }
+            if(D){
+               un_class[labelD] = labelB;
+            }
+          }
+          else if((C==1)&&((labelC<=labelA)||A == 0) && ((labelC<=labelB)||B==0)&&((labelC<=labelD)||D==0)){
+            printf("diag\n");
+            output_image[index] = labelC;
+            if(A){
+              un_class[labelA] = labelC;
+            }
+            if(B){
+              un_class[labelB] = labelC;
+            }
+            if(D){
+               un_class[labelD] = labelC;
+            }
+          }
+          else{
+            printf("diagonal2\n");
+            output_image[index] = labelD;
+            if(A){
+              un_class[labelA] = labelD;
+            }
+            if(B){
+              un_class[labelB] = labelD;
+            }
+            if(C){
+               un_class[labelC] = labelD;
+            }
+          }
+        }
+        /*
+        else if(A == 1 && B ==1 && C == 1 && D==1){//12
+          int labelA = output_image[above];
+          int labelB = output_image[left];
+          int labelC = output_image[diag];
+          int labelD = output_image[diag2];
+          if((labelA <= labelB) && (labelA <= labelC) && (labelA <= labelD)){
               output_image[index] = labelA;
               un_class[labelB] = labelA;
               un_class[labelC] = labelA;
+              un_class[labelD] = labelA;
+              
           }
-          else if((labelB <= labelC) && (labelB <= labelC)){
+          else if((labelB <= labelC) && (labelB <= labelC) && (labelB <= labelD)){
               output_image[index] = labelB;
               un_class[labelA] = labelB;
               un_class[labelC] = labelB;
+              un_class[labelD] = labelB;
+          }
+          else if((labelD <= labelC) && (labelD <= labelC) && (labelD <= labelA)){
+              output_image[index] = labelD;
+              un_class[labelA] = labelD;
+              un_class[labelC] = labelD;
+              un_class[labelB] = labelD;
           }
           else{
               output_image[index] = labelC;
               un_class[labelA] = labelC;
               un_class[labelB] = labelC;
+              un_class[labelD] = labelB;
           }
         }
         else if(A == 1 && B ==1){//5
@@ -101,7 +174,7 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
           int labelC = output_image[diag];
           output_image[index] = labelC;
         }
-  
+        */
     }
   }
   for (int y = 0; y < height; y++)
@@ -113,7 +186,7 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
         //printf("label %d \n", label);
         if(label!=0){
             int correct_label = un_class[label];
-            //printf("correct_label %d \n", correct_label);
+            //sprintf("correct_label %d \n", correct_label);
             if(correct_label!=label){
                 output_image[index] = correct_label;
             }
@@ -121,8 +194,12 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
     }
   }
 }
+
+
 int main(){
-  int test_array[9];
+  //FILE *myFile;
+    //myFile = fopen("test_image_for_connected.txt", "r");
+  int test_array[12];
   //test_array[0] = 1;
   //test_array[1] = 1;
   //test_array[2] = 1;
@@ -141,9 +218,12 @@ int main(){
   test_array[6] = 0;
   test_array[7] = 0;
   test_array[8] = 0;
-  int test_output[9];
-  conn_comp(test_array, test_output, 3, 3);
-  for (int i = 0; i<3; i++){
+  test_array[9] = 1;
+  test_array[10] = 0;
+  test_array[11] = 1;
+  int test_output[12];
+  conn_comp(test_array, test_output, 3, 4);
+  for (int i = 0; i<4; i++){
     for (int j = 0; j<3; j++){
       int index = j+i*3;
       //cout << test_output[index];
@@ -153,7 +233,5 @@ int main(){
     printf("\n");
   }
 }
-
-
 
 

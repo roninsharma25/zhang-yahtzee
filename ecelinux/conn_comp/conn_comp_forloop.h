@@ -1,2 +1,2 @@
-#define NUM_PIXELS 9
-void conn_comp(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS], int width, int height);
+#define NUM_PIXELS 12
+void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int height);
