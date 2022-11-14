@@ -15,7 +15,13 @@ int histogram[256];
 int count = 0;
 int otsu_mode = 1;
 pixel threshold_value;
-
+//added by Sofia
+ap_uint<ROW+2> in_buffer = 0;
+ap_unit<ROW+2> out_buffer = 0;
+int un_class[20];
+int labelNo = 1;
+int row_value = 0;
+int column_value = 0;
 void dut(
     hls::stream<bit32_t> &strm_in,
     hls::stream<pixel> &strm_out
@@ -28,6 +34,11 @@ void dut(
   bit32_t test_digit;
   // Read the two input 32-bit words (low word first)
   bit32_t input_lo = strm_in.read();
+  column_value += 1;
+  if(column_value >= ROW){
+    row_value+=1;
+    column_value = 0;
+  }
   // Set digit properly
   test_digit(31, 0) = input_lo;
   if(otsu_mode){
