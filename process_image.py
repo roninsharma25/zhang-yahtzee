@@ -4,7 +4,7 @@ import sys
 
 np.set_printoptions(threshold=sys.maxsize)
 
-img = Image.open( 'assets/dice.png' ).convert('L')
+img = Image.open( 'assets/5d_1_4_3_5_3.jpg' ).convert('L')
 img.load()
 data = np.asarray( img, dtype="int32" )
 print('DATA')
