@@ -4,16 +4,14 @@
 #endif
 
 #ifndef ROW
-#define ROW 5
-#endif
-
-#ifndef COL
-#define COL 3
+#define ROW 100
 #endif
 
 #include "typedefs.h"
 
 pixel otsu(int histogram[]);
+
+int sum(int a, int b);
 
 void update_histogram(bit32_t pixel_value, int histogram[]);
 

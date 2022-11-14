@@ -32,7 +32,7 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
         if(A == 0 && B == 0 && C== 0 && D==0){//6
           output_image[index] = labelNo;
           un_class[labelNo] = labelNo;
-          printf("new class");
+          printf("new class\nS");
           labelNo++;
           //assert (labelNo<20);
         }
@@ -177,6 +177,8 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
         */
     }
   }
+  int size_class[20];
+  int class_number = 0;
   for (int y = 0; y < height; y++)
   {
     for (int x = 0; x < width; x++)
@@ -187,12 +189,17 @@ void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int he
         if(label!=0){
             int correct_label = un_class[label];
             //sprintf("correct_label %d \n", correct_label);
+            size_class[correct_label] += 1;
             if(correct_label!=label){
                 output_image[index] = correct_label;
             }
         }
     }
   }
+  printf("1 size is %d\n", size_class[1]);
+  printf("2 size is %d\n", size_class[2]);
+  printf("3 size is %d\n", size_class[3]);
+
 }
 
 

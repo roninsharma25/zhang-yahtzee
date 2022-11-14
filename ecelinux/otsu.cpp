@@ -67,3 +67,5 @@ bit threshold_image(pixel input, pixel threshold_input){
     //printf("input: %d, threshold: %d, output: %d\n", input.to_int(), threshold_input.to_int(), output.to_int());
     return output;
 }
+
+int sum (int a, int b) { return a + b; }
