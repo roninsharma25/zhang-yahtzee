@@ -107,8 +107,10 @@ int main()
       // Call design under test (DUT)
       dut( digitrec_in, digitrec_out );
       // Read result
-      pixel threshold_pixel = digitrec_out.read();
-      printf("%d", threshold_pixel.to_int());
+      for(int i = 0; i < 4; i++){
+        pixel threshold_pixel = digitrec_out.read();
+        printf("%d", threshold_pixel.to_int());
+      }
       num_test_insts++;  
     }   
 
