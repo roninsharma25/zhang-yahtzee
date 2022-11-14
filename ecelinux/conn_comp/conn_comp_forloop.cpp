@@ -1,14 +1,14 @@
 #include <cmath>
 #include <stdio.h>
-#include <iostream>
+//#include <iostream>
 #include "conn_comp_forloop.h"
 
 // https://www.codeproject.com/Articles/825200/An-Implementation-Of-The-Connected-Component-Label
 
-using namespace std;
+//using namespace std;
 
 
-void conn_comp(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS], int width, int height) {
+void conn_comp(int input_image[NUM_PIXELS], int* output_image, int width, int height) {
   int labelNo = 1;
   int index   = 0;
   int un_class[20];
@@ -21,14 +21,15 @@ void conn_comp(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS], int wi
             output_image[index] = 0;
             continue;
         }
-        int above = x+ (width-1)*y;
+        int above = x+ (width)*(y-1);
         int left = x-1 + width*y;
-        int diag = x-1 + (width-1)*y;//12
+        int diag = x-1 + (width)*(y-1);//12
         int A = y == 0? 0: input_image[above];
         int B = x== 0? 0: input_image[left];
         int C = ((x==0)||(y==0))?0: input_image[diag];//8
         if(A == 0 && B == 0 && C== 0){//6
           output_image[index] = labelNo;
+          un_class[labelNo] = labelNo;
           labelNo++;
           //assert (labelNo<20);
         }
@@ -109,8 +110,10 @@ void conn_comp(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS], int wi
     {
         index = x + width*y;
         int label = output_image[index];
+        //printf("label %d \n", label);
         if(label!=0){
             int correct_label = un_class[label];
+            //printf("correct_label %d \n", correct_label);
             if(correct_label!=label){
                 output_image[index] = correct_label;
             }
@@ -120,23 +123,34 @@ void conn_comp(int input_image[NUM_PIXELS], int output_image[NUM_PIXELS], int wi
 }
 int main(){
   int test_array[9];
-  test_array[0] = 1;
+  //test_array[0] = 1;
+  //test_array[1] = 1;
+  //test_array[2] = 1;
+  //test_array[3] = 0;
+  //test_array[4] = 0;
+  //test_array[5] = 1;
+  //test_array[6] = 1;
+  //test_array[7] = 0;
+  //test_array[8] = 0;
+  test_array[0] = 0;
   test_array[1] = 1;
-  test_array[2] = 1;
-  test_array[3] = 0;
-  test_array[4] = 0;
-  test_array[5] = 1;
-  test_array[6] = 1;
+  test_array[2] = 0;
+  test_array[3] = 1;
+  test_array[4] = 1;
+  test_array[5] = 0;
+  test_array[6] = 0;
   test_array[7] = 0;
   test_array[8] = 0;
   int test_output[9];
-  conn_comp(test_array[NUM_PIXELS], test_output[NUM_PIXELS], 3, 3);
+  conn_comp(test_array, test_output, 3, 3);
   for (int i = 0; i<3; i++){
     for (int j = 0; j<3; j++){
-      int index = j+i*3
-      cout<<test_output[index];
+      int index = j+i*3;
+      //cout << test_output[index];
+      printf("%d", test_output[index]);
     }
-    cout<<endl;
+    //cout << endl;
+    printf("\n");
   }
 }
 
