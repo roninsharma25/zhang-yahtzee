@@ -61,14 +61,9 @@ pixel otsu(int histogram[]) {
     return threshold;
 }
 
-// void threshold_image(hls::stream<pixel> &input, hls::stream<bit> &output,
-//  pixel threshold){
-//     // Perform thresholding
-//     for (int i = 0; i < NUM_PIXELS; i++) {
-//         if (input_image[i] > threshold) {
-//             output_image[i] = 1;
-//         } else {
-//             output_image[i] = 0;
-//         }
-//     }
-// }
+bit threshold_image(pixel input, pixel threshold_input){
+    // Perform thresholding
+    bit output = (input.to_int() > threshold_input.to_int()) ? 1 : 0;
+    //printf("input: %d, threshold: %d, output: %d\n", input.to_int(), threshold_input.to_int(), output.to_int());
+    return output;
+}
