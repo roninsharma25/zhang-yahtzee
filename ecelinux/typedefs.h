@@ -14,4 +14,7 @@ typedef ap_uint<32> bit32_t;
 typedef ap_uint<64> bit64_t;
 typedef ap_uint<49> digit;
 
+typedef ap_uint<8> pixel;
+typedef ap_uint<1> bit;
+
 #endif

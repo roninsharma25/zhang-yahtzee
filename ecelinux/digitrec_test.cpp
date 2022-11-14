@@ -53,7 +53,7 @@ int main()
   int nbytes;
   int error = 0;
   int num_test_insts = 0;
-  bit32_t interpreted_digit;
+  bit32_t threshold_value;
 
 
   if ( myfile.is_open() ) {
@@ -79,7 +79,6 @@ int main()
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
-      //printf("ayaya %d\n", input_lo.to_int());
       // Write words to the device
       digitrec_in.write( input_lo );
     }
@@ -90,15 +89,30 @@ int main()
     for (int i = 0; i < N; ++i ) {
       // Call design under test (DUT)
       dut( digitrec_in, digitrec_out );
-
       // Read result
-      
       num_test_insts++;
       
     }   
 
-    pixel interpreted_digit = digitrec_out.read();
-    printf("yeye %d, %d \n", interpreted_digit.to_int(), num_test_insts);
+    pixel threshold_value = digitrec_out.read();
+
+    for (int i = 0; i < N; ++i ) {
+      // Read input from array and split into two 32-bit words
+      bit32_t input_lo = inputs[i].range(31,0);
+      // Write words to the device
+      digitrec_in.write( input_lo );
+    }
+
+    for (int i = 0; i < N; ++i ) {
+      // Call design under test (DUT)
+      dut( digitrec_in, digitrec_out );
+      // Read result
+      pixel threshold_pixel = digitrec_out.read();
+      printf("%d", threshold_pixel.to_int());
+      num_test_insts++;  
+    }   
+
+    printf("yeye %d, %d \n", threshold_value.to_int(), num_test_insts);
     timer.stop();
     
     // Close input file for the testing set

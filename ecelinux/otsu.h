@@ -17,5 +17,4 @@ pixel otsu(int histogram[]);
 
 void update_histogram(bit32_t pixel_value, int histogram[]);
 
-// void threshold_image(hls::stream<pixel> &input, hls::stream<bit> &output,
-//  pixel threshold);
+bit threshold_image(pixel input, pixel threshold_input);
