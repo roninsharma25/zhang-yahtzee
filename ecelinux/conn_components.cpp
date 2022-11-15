@@ -14,17 +14,11 @@ pixel labelD;
 
 pixel output;
 
-int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[64]) {
-  if ( (A == 0) && ((labelA <= labelB) || B == 1) && ((labelA <= labelC) || C == 1) && ((labelA <= labelD) || D == 1 )) {
+int un_class_method(bit A, bit B, pixel labelA, pixel labelB, pixel un_class[256]) {
+  if ( (A == 1) && ((labelA <= labelB) || B == 0)) {
     output = labelA;
-    if (B == 0) {
+    if (B == 1) {
       un_class[labelB] = labelA;
-    }
-    if (C == 0) {
-      un_class[labelC] = labelA;
-    }
-    if (D == 0) {
-      un_class[labelD] = labelA;
     }
     return 0;
   }
@@ -32,18 +26,16 @@ int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixe
 }
 
 
-pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[64], int width, int height, int x, int y) {
+pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[256], int width, int height, int x, int y) {
   
   bit in = in_buffer[0];
-  if(in==1){
-    return 0;
+  if(in == 0){
+    return 255;
   }
-  bit A = y == 0? 1: in_buffer[width];
-  bit B = x== 0? 1: in_buffer[1];
-  bit C = ((x==0)||(y==0))?1: in_buffer[width+1];//8
-  bit D = ((x==width-1)||(y==0))?1: in_buffer[width-1];
-  if(A && B && C && D){
-    output= labelNo;
+  bit A = (y == 0) ? 0 : in_buffer[width];
+  bit B = (x == 0) ? 0 : in_buffer[1];
+  if(A == 0 && B == 0){
+    output = labelNo;
     un_class[labelNo] = labelNo;
 
     labelNo++;
@@ -52,22 +44,21 @@ pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[64
 
     labelA = out_buffer(width*8+7,width*8);
     labelB = out_buffer(15,8);
-    labelC = out_buffer((width+1)*8+7,(width+1)*8);
-    labelD = out_buffer((width-1)*8+7,(width-1)*8);
-
-    int option_1 = un_class_method(A, B, C, D, labelA, labelB, labelC, labelD, un_class);
-    int option_2, option_3;
-    if (option_1) {
-      option_2 = un_class_method(B, A, C, D, labelB, labelA, labelC, labelD, un_class);
-    }
-    if (option_1 && option_2) {
-      option_3 = un_class_method(C, A, B, D, labelC, labelA, labelB, labelD, un_class);
-    }
-    if (option_1 && option_2 && option_3) {
-      un_class_method(D, A, B, C, labelD, labelA, labelB, labelC, un_class);
-    }
+    int option_1 = un_class_method(A, B, labelA, labelB, un_class);
+    if (option_1) un_class_method(B, A, labelB, labelA, un_class);
 
   }
+
+  if(A == 1){ 
+    for(int i = 1; i < width; i++){
+      if (in_buffer[i] != 0 && labelA <= out_buffer((i*8) + 7, (i*8))){
+        out_buffer((i*8) + 7, (i*8)) = labelA;
+        if(labelA < 10) printf("i am doing god's work %d %d\n", i, labelA.to_int());
+      } 
+      else return output;
+    }
+  }
+
 
   return output;
 }

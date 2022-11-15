@@ -105,11 +105,11 @@ int main()
     int count = 0;
     for (int i = 0; i < (168100); ++i ) {
       // Write words to the device
-      bit6_t conn_comp = out_stream.read();
+      pixel conn_comp = out_stream.read();
 
       outfile << conn_comp.to_int() << "\n";
       count++;
-      printf("iteration: %d \n", count);
+      // printf("iteration: %d \n", count);
 
       // if (count >= 410) {
       //   outfile << "\n";

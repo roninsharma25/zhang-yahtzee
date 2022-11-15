@@ -53,7 +53,7 @@ void dut(
     printf("threshold value: %d\n", threshold_value.to_int());
     strm_out.write(threshold_value);
   } else {
-    for(int i = 0; i < 42025; i++){
+    for(int j = 0; j < 42025; j++){
       // Read the two input 32-bit words (low word first)
       bit32_t input_lo = strm_in.read();
       // Update the histogram
@@ -63,14 +63,14 @@ void dut(
         // strm_out.write(threshold_bit);
 
         // Connected components
-        int connected_c;
-        in_buffer(COL+1,1) = in_buffer(COL,0);
+        pixel connected_c;
+        in_buffer(COL,1) = in_buffer(COL - 1,0);
         in_buffer[0] = threshold_bit;
-        out_buffer((COL+1)*8 + 7,8) = out_buffer(COL*8 + 7,0);
+        out_buffer((COL)*8 + 7,8) = out_buffer((COL-1)*8 + 7,0);
         connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
-        if (connected_c != 0) printf("connected c is %d\n", connected_c);
+        //if (connected_c != 0) printf("connected c is %d\n", connected_c.to_int());
         out_buffer(7,0) = connected_c;
-        strm_out.write(connected_c);
+        if ((j >= 103) || (j == 102 && i == 0)) strm_out.write(out_buffer((COL)*8 + 7, (COL)*8));
         column_value += 1;
         if (column_value >= COL) {
           row_value+=1;
@@ -79,5 +79,9 @@ void dut(
 
       }
     }
+    for (int j = COL; j >= 0; j--){
+      strm_out.write(out_buffer((j)*8 + 7, (j)*8));
+    }
+
   }
 }

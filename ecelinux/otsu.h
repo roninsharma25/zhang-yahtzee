@@ -4,7 +4,7 @@
 #endif
 
 #ifndef ROW
-#define ROW 100
+#define ROW 410
 #endif
 
 #include "typedefs.h"
