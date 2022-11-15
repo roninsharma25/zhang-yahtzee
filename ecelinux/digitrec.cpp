@@ -51,9 +51,9 @@ void dut(
       // Read the two input 32-bit words (low word first)
       bit32_t input_lo = strm_in.read();
       // Update the histogram
-      bit threshold_bit;
-      for(int i = 0; i < 4; i++){
-        threshold_bit = threshold_image(input_lo, threshold_value);
+      for(int i = 3; i >= 0; i--){
+        pixel chunk = input_lo((i << 3) + 7, (i << 3));
+        bit threshold_bit = threshold_image(chunk, threshold_value);
         strm_out.write(threshold_bit);
       }
     }

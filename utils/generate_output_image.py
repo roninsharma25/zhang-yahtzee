@@ -38,7 +38,7 @@ def main():
 
     # Process the data
     processed_data = process_data(data)
-
+    print(processed_data.shape)
     # Create the output image
     create_image(processed_data, output_image_name)
 
