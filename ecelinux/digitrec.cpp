@@ -18,51 +18,44 @@ pixel threshold_value;
 
 void dut(
     hls::stream<bit32_t> &strm_in,
-    hls::stream<pixel> &strm_out
+    hls::stream<pixel> &strm_out,
+    int rows,
+    int cols,
+    int otsu_mode
 )
 {
-  // -----------------------------
-  // YOUR CODE GOES HERE
-  // -----------------------------
+  int pixels = rows * cols;
 
-  bit32_t test_digit;
-  // Read the two input 32-bit words (low word first)
-  bit32_t input_lo = strm_in.read();
-  // Set digit properly
-  test_digit(31, 0) = input_lo;
   if(otsu_mode){
-    if(first){
-      for (int i = 0; i < 256; i++){
-        histogram[i] = 0;
-      }
-      first = 0;
+    for (int i = 0; i < 256; i++){
+      histogram[i] = 0;
     }
 
-    // Update the histogram
-    update_histogram(test_digit, histogram);
-    
-    count++;
-
-    // Write out the interpreted digit
-    if(count >= 2800){
-      printf("histogram: [");
-        for(int i = 0; i < 256; i++){
-          printf("%d,", histogram[i]);
-        }
-      printf("]\n");
-      threshold_value = otsu(histogram);
-      printf("threshold value: %d\n", threshold_value.to_int());
-      strm_out.write(threshold_value);
-      otsu_mode = 0;
+    for(int i = 0; i < 42025; i++){
+      // Read the two input 32-bit words (low word first)
+        bit32_t input_lo = strm_in.read();
+        // Update the histogram
+        update_histogram(input_lo, histogram);
     }
+
+    printf("histogram: [");
+    for(int i = 0; i < 256; i++){
+      printf("%d,", histogram[i]);
+    }
+    printf("]\n");
+    threshold_value = otsu(histogram);
+    printf("threshold value: %d\n", threshold_value.to_int());
+    strm_out.write(threshold_value);
   } else {
-    bit threshold_bit;
-    for(int i = 0; i < 4; i++){
-      threshold_bit = threshold_image(input_lo, threshold_value);
-      strm_out.write(threshold_bit);
+    for(int i = 0; i < 42025; i++){
+      // Read the two input 32-bit words (low word first)
+      bit32_t input_lo = strm_in.read();
+      // Update the histogram
+      bit threshold_bit;
+      for(int i = 0; i < 4; i++){
+        threshold_bit = threshold_image(input_lo, threshold_value);
+        strm_out.write(threshold_bit);
+      }
     }
   }
-  
-
-
 }

@@ -18,7 +18,10 @@
 // Top function for synthesis
 void dut(
     hls::stream<bit32_t> &strm_in,
-    hls::stream<pixel> &strm_out
+    hls::stream<pixel> &strm_out,
+    int rows,
+    int cols,
+    int otsu_mode
 );
 
 // Top function for digit recognition

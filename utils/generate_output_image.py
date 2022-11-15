@@ -9,7 +9,7 @@ def load_data_from_file(file_name):
     
     return input_data
 
-def process_data(data, num_columns = 112): # CHANGE DEFAULT VALUE WHEN NEW DATA IS READY
+def process_data(data, num_columns = 410): # CHANGE DEFAULT VALUE WHEN NEW DATA IS READY
     output_array = []
     row = []
     for value in data:

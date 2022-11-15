@@ -35,14 +35,15 @@ int main()
   
   // Read input file for the testing set
   std::string line;
-  std::ifstream myfile ("data/output_formatted.txt");
+  // std::ifstream myfile ("data/output_formatted.txt");
+  std::ifstream myfile ("output/5d14353.txt");
   
   // HLS streams for communicating with the cordic block
-  hls::stream<bit32_t> digitrec_in;
-  hls::stream<pixel> digitrec_out;
+  hls::stream<bit32_t> in_stream;
+  hls::stream<pixel> out_stream;
 
   // Number of test instances
-  const int N = 2800;
+  const int N = 42025;
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
@@ -53,15 +54,15 @@ int main()
   int nbytes;
   int error = 0;
   int num_test_insts = 0;
+  int rows = 410;
+  int cols = 410;
   bit32_t threshold_value;
 
 
   if ( myfile.is_open() ) {
-
-    //--------------------------------------------------------------------
-    // Read data from the input file into two arrays
-    //--------------------------------------------------------------------
     assert( std::getline( myfile, line) );
+    // std::string row_string = line.substr(0, line.find(","));
+    // std::string col_string = line.substr(line.find(", "), line.length());
     for (int i = 0; i < N; ++i) {
       assert( std::getline( myfile, line) );
       // Read handwritten digit input
@@ -80,41 +81,52 @@ int main()
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
       // Write words to the device
-      digitrec_in.write( input_lo );
+      in_stream.write( input_lo );
     }
 
     //--------------------------------------------------------------------
     // Execute the digitrec sim and receive data
     //--------------------------------------------------------------------
-    for (int i = 0; i < N; ++i ) {
-      // Call design under test (DUT)
-      dut( digitrec_in, digitrec_out );
-      // Read result
-      num_test_insts++;
-      
-    }   
+    dut( in_stream, out_stream, rows, cols, 1);
 
-    pixel threshold_value = digitrec_out.read();
+    pixel threshold_value = out_stream.read();
+
+    printf("threshold value: %d \n", threshold_value.to_int());
 
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
       // Write words to the device
-      digitrec_in.write( input_lo );
+      in_stream.write( input_lo );
     }
 
-    for (int i = 0; i < N; ++i ) {
-      // Call design under test (DUT)
-      dut( digitrec_in, digitrec_out );
-      // Read result
-      for(int i = 0; i < 4; i++){
-        pixel threshold_pixel = digitrec_out.read();
-        printf("%d", threshold_pixel.to_int());
-      }
-      num_test_insts++;  
-    }   
+    dut( in_stream, out_stream, rows, cols, 0);
 
-    printf("yeye %d, %d \n", threshold_value.to_int(), num_test_insts);
+    for (int i = 0; i < (168100); ++i ) {
+      // Write words to the device
+      bit threshold_pixel = out_stream.read();
+      outfile << threshold_pixel.to_int();
+    }
+
+
+    // for (int i = 0; i < N; ++i ) {
+    //   // Read input from array and split into two 32-bit words
+    //   bit32_t input_lo = inputs[i].range(31,0);
+    //   // Write words to the device
+    //   in_stream.write( input_lo );
+    // }
+
+    // for (int i = 0; i < N; ++i ) {
+    //   // Call design under test (DUT)
+    //   dut( in_stream, out_stream );
+    //   // Read result
+    //   for(int i = 0; i < 4; i++){
+    //     pixel threshold_pixel = out_stream.read();
+    //     printf("%d", threshold_pixel.to_int());
+    //   }
+    //   num_test_insts++;  
+    // }   
+
     timer.stop();
     
     // Close input file for the testing set
