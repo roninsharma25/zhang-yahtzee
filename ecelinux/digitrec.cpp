@@ -27,63 +27,61 @@ int row_value = 0;
 int column_value = 0;
 void dut(
     hls::stream<bit32_t> &strm_in,
-    hls::stream<pixel> &strm_out
+    hls::stream<pixel> &strm_out,
+    int rows,
+    int cols,
+    int otsu_mode
 )
 {
-  // -----------------------------
-  // YOUR CODE GOES HERE
-  // -----------------------------
+  int pixels = rows * cols;
 
-  bit32_t test_digit;
-  // Read the two input 32-bit words (low word first)
-  bit32_t input_lo = strm_in.read();
-  // Set digit properly
-  test_digit(31, 0) = input_lo;
   if(otsu_mode){
-    if(first){
-      for (int i = 0; i < 256; i++){
-        histogram[i] = 0;
-      }
-      first = 0;
+    for (int i = 0; i < 256; i++){
+      histogram[i] = 0;
     }
 
-    // Update the histogram
-    update_histogram(test_digit, histogram);
-    
-    count++;
+    for(int i = 0; i < 42025; i++){
+      // Read the two input 32-bit words (low word first)
+        bit32_t input_lo = strm_in.read();
+        // Update the histogram
+        update_histogram(input_lo, histogram);
+    }
+    printf("histogram: [");
+    for(int i = 0; i < 256; i++){
+      printf("%d,", histogram[i]);
+    }
+    printf("]\n");
+    threshold_value = otsu(histogram);
+    printf("threshold value: %d\n", threshold_value.to_int());
+    strm_out.write(threshold_value);
+  } else {
+    for(int i = 0; i < 42025; i++){
+      // Read the two input 32-bit words (low word first)
+      bit32_t input_lo = strm_in.read();
+      // Update the histogram
+      for(int i = 3; i >= 0; i--){
+        pixel chunk = input_lo((i << 3) + 7, (i << 3));
+        bit threshold_bit = threshold_image(chunk, threshold_value);
+        strm_out.write(threshold_bit);
 
-    // Write out the interpreted digit
-    if(count >= 2800){//42025
-      printf("histogram: [");
-        for(int i = 0; i < 256; i++){
-          printf("%d,", histogram[i]);
+        // Connected components
+        int connected_c;
+        for(int i = 0; i < 4; i++){
+          threshold_bit = threshold_image(input_lo, threshold_value);
+          in_buffer(COL+1,1) = in_buffer(COL,0);
+          in_buffer[0] = threshold_bit;
+          out_buffer((COL+1)*3 + 2,3) = out_buffer(COL*3 + 2,0);
+          connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
+          //printf("connected c is %d\n", connected_c);
+          out_buffer(2,0) = connected_c;
+          strm_out.write(connected_c);
+          column_value += 1;
+          if (column_value >= COL) {
+            row_value+=1;
+            column_value = 0;
+          }
         }
-      printf("]\n");
-      threshold_value = otsu(histogram);
-      printf("threshold value: %d\n", threshold_value.to_int());
-      strm_out.write(threshold_value);
-      otsu_mode = 0;
-    }
-  } else{
-    bit threshold_bit;
-    int connected_c;
-    for(int i = 0; i < 4; i++){
-      threshold_bit = threshold_image(input_lo, threshold_value);
-      in_buffer(COL+1,1) = in_buffer(COL,0);
-      in_buffer[0] = threshold_bit;
-      out_buffer((COL+1)*3 + 2,3) = out_buffer(COL*3 + 2,0);
-      connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
-      //printf("connected c is %d\n", connected_c);
-      out_buffer(2,0) = connected_c;
-      strm_out.write(connected_c);
-      column_value += 1;
-      if(column_value >= COL){
-        row_value+=1;
-        column_value = 0;
       }
     }
   }
-  
-
-
 }
