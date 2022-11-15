@@ -11,17 +11,15 @@
 // Top function
 //----------------------------------------------------------
 
+
 int first = 1;
 int histogram[256];
 int count = 0;
 int otsu_mode = 1;
 pixel threshold_value;
-//added by Sofia
 buf_bit in_buffer = 0;
-buf_3 out_buffer = 0;
-//bit6_t un_class[20];
-bit3_t un_class[20];
-//bit6_t labelNo = 1;
+buf_8 out_buffer = 0;
+pixel un_class[64];
 int zero_n = 0;
 int row_value = 0;
 int column_value = 0;
@@ -62,25 +60,23 @@ void dut(
       for(int i = 3; i >= 0; i--){
         pixel chunk = input_lo((i << 3) + 7, (i << 3));
         bit threshold_bit = threshold_image(chunk, threshold_value);
-        strm_out.write(threshold_bit);
+        // strm_out.write(threshold_bit);
 
         // Connected components
         int connected_c;
-        for(int i = 0; i < 4; i++){
-          threshold_bit = threshold_image(input_lo, threshold_value);
-          in_buffer(COL+1,1) = in_buffer(COL,0);
-          in_buffer[0] = threshold_bit;
-          out_buffer((COL+1)*3 + 2,3) = out_buffer(COL*3 + 2,0);
-          connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
-          //printf("connected c is %d\n", connected_c);
-          out_buffer(2,0) = connected_c;
-          strm_out.write(connected_c);
-          column_value += 1;
-          if (column_value >= COL) {
-            row_value+=1;
-            column_value = 0;
-          }
+        in_buffer(COL+1,1) = in_buffer(COL,0);
+        in_buffer[0] = threshold_bit;
+        out_buffer((COL+1)*8 + 7,8) = out_buffer(COL*8 + 7,0);
+        connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
+        if (connected_c != 0) printf("connected c is %d\n", connected_c);
+        out_buffer(7,0) = connected_c;
+        strm_out.write(connected_c);
+        column_value += 1;
+        if (column_value >= COL) {
+          row_value+=1;
+          column_value = 0;
         }
+
       }
     }
   }

@@ -31,7 +31,7 @@ int main()
 {
   // Output file that saves the test bench results
   std::ofstream outfile;
-  outfile.open("output/out_output_formatted.txt");
+  outfile.open("output/out_conn_comp.txt");
   
   // Read input file for the testing set
   std::string line;
@@ -102,10 +102,19 @@ int main()
 
     dut( in_stream, out_stream, rows, cols, 0);
 
+    int count = 0;
     for (int i = 0; i < (168100); ++i ) {
       // Write words to the device
-      bit threshold_pixel = out_stream.read();
-      outfile << threshold_pixel.to_int();
+      bit6_t conn_comp = out_stream.read();
+
+      outfile << conn_comp.to_int() << "\n";
+      count++;
+      printf("iteration: %d \n", count);
+
+      // if (count >= 410) {
+      //   outfile << "\n";
+      //   count = 0;
+      // }
     }
 
 
