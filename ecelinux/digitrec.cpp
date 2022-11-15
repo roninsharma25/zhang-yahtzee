@@ -67,7 +67,7 @@ void dut(
       strm_out.write(threshold_value);
       otsu_mode = 0;
     }
-  } else {
+  } else{
     bit threshold_bit;
     int connected_c;
     for(int i = 0; i < 4; i++){
@@ -75,7 +75,8 @@ void dut(
       in_buffer(COL+1,1) = in_buffer(COL,0);
       in_buffer[0] = threshold_bit;
       out_buffer((COL+1)*6 + 5,6) = out_buffer(COL*6 + 5,0);
-      connected_c = conn_comp_1st_pass(in_buffer,out_buffer, COL, ROW, column_value, row_value);
+      connected_c = conn_comp_1st_pass(in_buffer,out_buffer, un_class, COL, ROW, column_value, row_value, labelNo);
+      //printf("connected c is %d\n", connected_c);
       out_buffer(5,0) = connected_c;
       column_value++;
       strm_out.write(connected_c);
