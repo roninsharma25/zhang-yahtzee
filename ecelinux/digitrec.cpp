@@ -18,9 +18,11 @@ int otsu_mode = 1;
 pixel threshold_value;
 //added by Sofia
 buf_bit in_buffer = 0;
-buf_6 out_buffer = 0;
-bit6_t un_class[20];
-bit6_t labelNo = 1;
+buf_3 out_buffer = 0;
+//bit6_t un_class[20];
+bit3_t un_class[20];
+//bit6_t labelNo = 1;
+int zero_n = 0;
 int row_value = 0;
 int column_value = 0;
 void dut(
@@ -35,11 +37,6 @@ void dut(
   bit32_t test_digit;
   // Read the two input 32-bit words (low word first)
   bit32_t input_lo = strm_in.read();
-  column_value += 1;
-  if(column_value >= COL){
-    row_value+=1;
-    column_value = 0;
-  }
   // Set digit properly
   test_digit(31, 0) = input_lo;
   if(otsu_mode){
@@ -56,7 +53,7 @@ void dut(
     count++;
 
     // Write out the interpreted digit
-    if(count >= 2800){
+    if(count >= 2800){//42025
       printf("histogram: [");
         for(int i = 0; i < 256; i++){
           printf("%d,", histogram[i]);
@@ -74,12 +71,16 @@ void dut(
       threshold_bit = threshold_image(input_lo, threshold_value);
       in_buffer(COL+1,1) = in_buffer(COL,0);
       in_buffer[0] = threshold_bit;
-      out_buffer((COL+1)*6 + 5,6) = out_buffer(COL*6 + 5,0);
-      connected_c = conn_comp_1st_pass(in_buffer,out_buffer, un_class, COL, ROW, column_value, row_value, labelNo);
+      out_buffer((COL+1)*3 + 2,3) = out_buffer(COL*3 + 2,0);
+      connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
       //printf("connected c is %d\n", connected_c);
-      out_buffer(5,0) = connected_c;
-      column_value++;
+      out_buffer(2,0) = connected_c;
       strm_out.write(connected_c);
+      column_value += 1;
+      if(column_value >= COL){
+        row_value+=1;
+        column_value = 0;
+      }
     }
   }
   

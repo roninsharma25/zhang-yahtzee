@@ -2,18 +2,113 @@
 #include <stdio.h>
 //#include <iostream>
 #include "conn_components.h"
+#include <cassert> 
 
 // https://www.codeproject.com/Articles/825200/An-Implementation-Of-The-Connected-Component-Label
 
 //using namespace std;
 
-
-bit6_t conn_comp_1st_pass( buf_bit in_buffer, buf_6 out_buffer, bit6_t un_class[20], int width, int height, int x, int y, bit6_t labelNo) {
-        bit6_t output;
+bit3_t labelNo = 1;
+bit3_t conn_comp_1st_pass( buf_bit in_buffer, buf_3 out_buffer, bit3_t un_class[20], int width, int height, int x, int y) {
+  bit3_t output;
+  bit in = in_buffer[0];
+  if(in==1){
+    return 0;
+  }
+  bit A = y == 0? 1: in_buffer[width];
+  bit B = x== 0? 1: in_buffer[1];
+  bit C = ((x==0)||(y==0))?1: in_buffer[width+1];//8
+  bit D = ((x==width-1)||(y==0))?1: in_buffer[width-1];
+  if(A && B && C && D){//6
+    //output_image[index] = labelNo;
+    output= labelNo;
+    un_class[labelNo] = labelNo;
+    //if(labelNo == 4){
+    //  printf("a is %d", (int)A);
+    //  printf("b is %d", (int)B);
+    //  printf("c is %d", (int)C);
+    //  printf("d is %d", (int)D);
+    //  printf("x is %d", x);
+    //}
+    //printf("new class\n");
+    //printf("%d", (int)labelNo);
+    labelNo++;
+    assert (labelNo<8);
+  }
+  else{
+    //bit6_t labelA = out_buffer(width*6+5,width*6);
+    //bit6_t labelB = out_buffer(11,6);
+    //bit6_t labelC = out_buffer((width+1)*6+5,(width+1)*6);
+    //bit6_t labelD = out_buffer((width-1)*6+5,(width-1)*6);
+    bit6_t labelA = out_buffer(width*3+2,width*3);
+    bit6_t labelB = out_buffer(5,3);
+    bit6_t labelC = out_buffer((width+1)*3+2,(width+1)*3);
+    bit6_t labelD = out_buffer((width-1)*3+2,(width-1)*3);
+    if((A==0)&&((labelA<=labelB)||B == 1) && ((labelA<=labelC)||C==1)&&((labelA<=labelD)||D==1)){
+            //printf("above\n");
+            //output_image[index] = labelA;
+      output = labelA;
+      if(B==0){
+        un_class[labelB] = labelA;
+      }
+      if(C==0){
+        un_class[labelC] = labelA;
+      }
+      if(D==0){
+         un_class[labelD] = labelA;
+      }
+    }
+    else if((B==0)&&((labelB<=labelA)||A == 1) && ((labelB<=labelC)||C==1)&&((labelB<=labelD)||D==1)){
+      //printf("left\n");
+      //output_image[index] = labelB;
+      output = labelB;
+      if(A==0){
+        un_class[labelA] = labelB;
+      }
+      if(C==0){
+        un_class[labelC] = labelB;
+      }
+      if(D==0){
+         un_class[labelD] = labelB;
+      }
+    }
+    else if((C==0)&&((labelC<=labelA)||A == 1) && ((labelC<=labelB)||B==1)&&((labelC<=labelD)||D==1)){
+      //printf("diag\n");
+      //output_image[index] = labelC;
+      output = labelC;
+      if(A==0){
+        un_class[labelA] = labelC;
+      }
+      if(B==0){
+        un_class[labelB] = labelC;
+      }
+      if(D==0){
+         un_class[labelD] = labelC;
+      }
+    }
+    else{
+      //printf("diagonal2\n");
+      //output_image[index] = labelD;
+      output = labelD;
+      if(A==0){
+        un_class[labelA] = labelD;
+      }
+      if(B==0){
+        un_class[labelB] = labelD;
+      }
+      if(C==0){
+         un_class[labelC] = labelD;
+      }
+    }
+  }
+  return output;
+        /*
+        bit3_t output;
         bit in = in_buffer[0];
         if(in==0){
           return 0;
         }
+        printf("not 0\n");
         bit A = y == 0? 0: in_buffer[width];
         bit B = x== 0? 0: in_buffer[1];
         bit C = ((x==0)||(y==0))?0: in_buffer[width+1];//8
@@ -22,15 +117,20 @@ bit6_t conn_comp_1st_pass( buf_bit in_buffer, buf_6 out_buffer, bit6_t un_class[
           //output_image[index] = labelNo;
           output= labelNo;
           un_class[labelNo] = labelNo;
-          //printf("new class");
+          printf("new class\n");
           labelNo++;
-          //assert (labelNo<20);
+
+          assert (labelNo<8);
         }
         else{
-          bit6_t labelA = out_buffer(width*6+5,width*6);
-          bit6_t labelB = out_buffer(11,6);
-          bit6_t labelC = out_buffer((width+1)*6+5,(width+1)*6);
-          bit6_t labelD = out_buffer((width-1)*6+5,(width-1)*6);
+          //bit6_t labelA = out_buffer(width*6+5,width*6);
+          //bit6_t labelB = out_buffer(11,6);
+          //bit6_t labelC = out_buffer((width+1)*6+5,(width+1)*6);
+          //bit6_t labelD = out_buffer((width-1)*6+5,(width-1)*6);
+          bit6_t labelA = out_buffer(width*3+2,width*3);
+          bit6_t labelB = out_buffer(5,3);
+          bit6_t labelC = out_buffer((width+1)*3+2,(width+1)*3);
+          bit6_t labelD = out_buffer((width-1)*3+2,(width-1)*3);
           if((A==1)&&((labelA<=labelB)||B == 0) && ((labelA<=labelC)||C==0)&&((labelA<=labelD)||D==0)){
             //printf("above\n");
             //output_image[index] = labelA;
@@ -89,7 +189,7 @@ bit6_t conn_comp_1st_pass( buf_bit in_buffer, buf_6 out_buffer, bit6_t un_class[
           }
         }
         return output;
-  
+*/
 /*
   for (int y = 0; y < height; y++)
   {
