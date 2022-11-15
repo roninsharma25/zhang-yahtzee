@@ -14,7 +14,7 @@ pixel labelD;
 
 pixel output;
 
-int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[64]) {
+int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[256]) {
   if ( (A == 0) && ((labelA <= labelB) || B == 1) && ((labelA <= labelC) || C == 1) && ((labelA <= labelD) || D == 1 )) {
     output = labelA;
     if (B == 0) {
@@ -32,11 +32,11 @@ int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixe
 }
 
 
-pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[64], int width, int height, int x, int y) {
+pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[256], int width, int height, int x, int y) {
   
   bit in = in_buffer[0];
   if(in==1){
-    return 0;
+    return 255;
   }
   bit A = y == 0? 1: in_buffer[width];
   bit B = x== 0? 1: in_buffer[1];

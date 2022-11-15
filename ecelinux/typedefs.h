@@ -2,11 +2,11 @@
 // typedefs.h
 //===========================================================================
 // @brief: This header defines the shorthand of several ap_uint data types.
-#define AP_INT_MAX_W 1240
+#define AP_INT_MAX_W 3300
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 #ifndef COL
-#define COL 112//410
+#define COL 410//410
 #endif
 
 #include "ap_int.h"
