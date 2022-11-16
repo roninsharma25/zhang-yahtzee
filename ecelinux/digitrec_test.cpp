@@ -35,15 +35,18 @@ int main()
   
   // Read input file for the testing set
   std::string line;
-  //std::ifstream myfile ("data/output_formatted.txt");
-  std::ifstream myfile ("output/5d14353.txt");
+
+  // std::ifstream myfile ("output/5d14353.txt");
+
+  // Test with a small input image
+  std::ifstream myfile ("output/small_input.txt");
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> in_stream;
   hls::stream<pixel> out_stream;
 
   // Number of test instances
-  const int N = 42025;
+  const int N = 4; //42025;
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
@@ -54,8 +57,8 @@ int main()
   int nbytes;
   int error = 0;
   int num_test_insts = 0;
-  int rows = 410;
-  int cols = 410;
+  int rows = 4; //410;
+  int cols = 4; //410;
   bit32_t threshold_value;
 
 
@@ -102,39 +105,25 @@ int main()
 
     dut( in_stream, out_stream, rows, cols, 0);
 
-    int count = 0;
-    for (int i = 0; i < (168100); ++i ) {
-      // Write words to the device
-      pixel conn_comp = out_stream.read();
 
-      outfile << conn_comp.to_int() << "\n";
-      count++;
-      // printf("iteration: %d \n", count);
-
-      // if (count >= 410) {
-      //   outfile << "\n";
-      //   count = 0;
-      // }
-    }
-
-
-    // for (int i = 0; i < N; ++i ) {
-    //   // Read input from array and split into two 32-bit words
-    //   bit32_t input_lo = inputs[i].range(31,0);
+    // for (int i = 0; i < NUM_PIXELS; ++i ) {
     //   // Write words to the device
-    //   in_stream.write( input_lo );
+    //   pixel conn_comp = out_stream.read();
+
+    //   outfile << conn_comp.to_int() << "\n";
+    //   printf("conn comp: %d \n", conn_comp.to_int());
     // }
 
-    // for (int i = 0; i < N; ++i ) {
-    //   // Call design under test (DUT)
-    //   dut( in_stream, out_stream );
-    //   // Read result
-    //   for(int i = 0; i < 4; i++){
-    //     pixel threshold_pixel = out_stream.read();
-    //     printf("%d", threshold_pixel.to_int());
-    //   }
-    //   num_test_insts++;  
-    // }   
+    for (int i = 0; i < ROW_COUNT; ++i ) {
+      for (int j = 0; j < ROW_COUNT; ++j) {
+        // Write words to the device
+        pixel conn_comp = out_stream.read();
+
+        outfile << conn_comp.to_int() << " ";
+        // printf("conn comp: %d \n", conn_comp.to_int());
+      }
+      outfile << "\n";
+    }
 
     timer.stop();
     

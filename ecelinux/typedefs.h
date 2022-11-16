@@ -6,7 +6,7 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 #ifndef COL
-#define COL 410//410
+#define COL 4 //410
 #endif
 
 #include "ap_int.h"
