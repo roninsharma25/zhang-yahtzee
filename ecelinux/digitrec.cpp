@@ -67,7 +67,7 @@ void dut(
         in_buffer(COL,1) = in_buffer(COL - 1,0);
         in_buffer[0] = threshold_bit;
         out_buffer((COL)*8 + 7,8) = out_buffer((COL-1)*8 + 7,0);
-        connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
+        connected_c = conn_comp_1st_pass(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value);
         //if (connected_c != 0) printf("connected c is %d\n", connected_c.to_int());
         out_buffer(7,0) = connected_c;
         if ((j >= 103) || (j == 102 && i == 0)) strm_out.write(out_buffer((COL)*8 + 7, (COL)*8));

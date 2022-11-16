@@ -26,7 +26,7 @@ int un_class_method(bit A, bit B, pixel labelA, pixel labelB, pixel un_class[256
 }
 
 
-pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[256], int width, int height, int x, int y) {
+pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y) {
   
   bit in = in_buffer[0];
   if(in == 0){
@@ -42,8 +42,8 @@ pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[25
     assert (labelNo<256);
   } else {
 
-    labelA = out_buffer(width*8+7,width*8);
-    labelB = out_buffer(15,8);
+    labelA = (*out_buffer)(width*8+7,width*8);
+    labelB = (*out_buffer)(15,8);
     int option_1 = un_class_method(A, B, labelA, labelB, un_class);
     if (option_1) un_class_method(B, A, labelB, labelA, un_class);
 
@@ -51,8 +51,8 @@ pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 out_buffer, pixel un_class[25
 
   if(A == 1){ 
     for(int i = 1; i < width; i++){
-      if (in_buffer[i] != 0 && labelA <= out_buffer((i*8) + 7, (i*8))){
-        out_buffer((i*8) + 7, (i*8)) = labelA;
+      if (in_buffer[i] != 0 && labelA <= (*out_buffer)((i*8) + 7, (i*8))){
+        (*out_buffer)((i*8) + 7, (i*8)) = labelA;
         if(labelA < 10) printf("i am doing god's work %d %d\n", i, labelA.to_int());
       } 
       else return output;

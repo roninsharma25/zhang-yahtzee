@@ -43,6 +43,8 @@ def main():
     # Process the data
     processed_data = process_data(data, False)
 
+    np.savetxt('test.txt', processed_data, fmt = '%i')
+
     # Create the output image
     create_image(processed_data, output_image_name)
 
