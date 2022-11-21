@@ -103,11 +103,11 @@ int main()
     dut( in_stream, out_stream, rows, cols, 0);
 
     int count = 0;
-    for (int i = 0; i < (168100); ++i ) {
+    for (int i = 0; i < 7; ++i ) {
       // Write words to the device
-      pixel conn_comp = out_stream.read();
+      int conn_comp = out_stream.read();
 
-      outfile << conn_comp.to_int() << "\n";
+      outfile << conn_comp << "\n";
       count++;
       // printf("iteration: %d \n", count);
 
