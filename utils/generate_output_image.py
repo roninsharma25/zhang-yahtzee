@@ -16,7 +16,7 @@ def process_data(data, flag = True, num_columns = 410): # CHANGE DEFAULT VALUE W
     for value in data:
         new_value = value
         if (flag):
-            new_value = int(value) * 255
+            new_value = int(value) * 255 
         if (len(row) < num_columns):
             row.append(new_value)
         else:
@@ -42,6 +42,8 @@ def main():
 
     # Process the data
     processed_data = process_data(data, False)
+
+    np.savetxt('test.txt', processed_data, fmt = '%i')
 
     # Create the output image
     create_image(processed_data, output_image_name)

@@ -22,12 +22,6 @@ int un_class_method_black(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB
     if (B == 0) {
       un_class[labelB] = labelA;
     }
-    if (C == 0) {
-      un_class[labelC] = labelA;
-    }
-    if (D == 0) {
-      un_class[labelD] = labelA;
-    }
     return 0;
   }
   return 1;
@@ -53,8 +47,8 @@ int un_class_method_white(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB
 
 pixel conn_comp_1st_pass_black( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y, pixel label[256], buf_8 out_bufferW) {
   bit in = in_buffer[0];
-  if(in==1){
-    return 0;
+  if(in == 0){
+    return 255;
   }
   bit A = y == 0? (bit)1: in_buffer[width];
   bit B = x== 0? (bit)1: in_buffer[1];
@@ -159,6 +153,15 @@ pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
       un_class_method_white(D, A, B, C, labelD, labelA, labelB, labelC, un_class);
     }
 
+  if(A == 1){ 
+    for(int i = 1; i < width; i++){
+      pixel class_check = (*out_buffer)((i*8) + 7, (i*8));
+      if (in_buffer[i] != 0 && labelA <= class_check){
+        (*out_buffer)((i*8) + 7, (i*8)) = labelA;
+      //  if(labelA < 10) printf("i am doing god's work %d %d\n", i, labelA.to_int());
+      } 
+      else return output;
+    }
   }
 
   return outputW;
