@@ -109,7 +109,7 @@ int main()
 
       outfile << conn_comp.to_int() << "\n";
       count++;
-      printf("iteration: %d \n", count);
+      //printf("iteration: %d \n", count);
 
       // if (count >= 410) {
       //   outfile << "\n";

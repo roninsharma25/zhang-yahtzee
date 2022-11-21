@@ -19,7 +19,7 @@ int otsu_mode = 1;
 pixel threshold_value;
 buf_bit in_buffer = 0;
 buf_8 out_buffer = 0;
-pixel un_class[64];
+pixel un_class[256];
 int zero_n = 0;
 int row_value = 0;
 int column_value = 0;
@@ -53,6 +53,13 @@ void dut(
     printf("threshold value: %d\n", threshold_value.to_int());
     strm_out.write(threshold_value);
   } else {
+    for(int m = 0; m<256; m++){
+      un_class[m] = 255;
+      //un_classW[m] = 255;
+      //size[m] = 0;
+      //label[m] = 0;
+      //dice_value[m] = 0;
+    }
     for(int i = 0; i < 42025; i++){
       // Read the two input 32-bit words (low word first)
       bit32_t input_lo = strm_in.read();
@@ -67,8 +74,8 @@ void dut(
         in_buffer(COL+1,1) = in_buffer(COL,0);
         in_buffer[0] = threshold_bit;
         out_buffer((COL+1)*8 + 7,8) = out_buffer(COL*8 + 7,0);
-        connected_c = conn_comp_1st_pass(in_buffer, out_buffer, un_class, COL, ROW, column_value, row_value);
-        if (connected_c != 0) printf("connected c is %d\n", connected_c);
+        connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value);
+        //if (connected_c != 0) printf("connected c is %d\n", connected_c);
         out_buffer(7,0) = connected_c;
         strm_out.write(connected_c);
         column_value += 1;
@@ -79,5 +86,32 @@ void dut(
 
       }
     }
+    int black_dots = 0;
+    //int white_blobs = 0;
+    for (int k= 0; k<256; k++){
+      int add = 1;
+      //int addW = 1;
+      int name = un_class[k];
+      //int nameW = un_classW[k];
+      for (int m= 0; m<k; m++){
+        if(name == un_class[m]){
+          add = 0;
+        }
+        //if(nameW == un_classW[m]){
+        //  addW = 0;
+        //}
+      }
+      if(add){
+        black_dots++;
+        //pixel next_W = un_classW[label[name]];
+        //if(next_W != 0){
+        //  dice_value[next_W] +=1;
+        //}
+      }
+      //if(addW){
+      //  white_blobs++;
+      //}
+    }
+    printf("number of black catagories ----------%d", black_dots);
   }
 }
