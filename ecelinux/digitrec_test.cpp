@@ -36,7 +36,8 @@ int main()
   // Read input file for the testing set
   std::string line;
   //std::ifstream myfile ("data/output_formatted.txt");
-  std::ifstream myfile ("output/5d14353.txt");
+  //std::ifstream myfile ("output/5d14353.txt");
+  std::ifstream myfile ("5d26361.txt");
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> in_stream;
