@@ -16,6 +16,8 @@ set_top dut
 add_files digitrec.cpp
 add_files -tb digitrec_test.cpp
 add_files -tb data
+add_files conn_components.cpp
+add_files otsu.cpp
 
 open_solution "solution1"
 # Use Zynq device

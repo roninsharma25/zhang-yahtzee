@@ -55,7 +55,7 @@ pixel otsu(int histogram[]) {
         printf("intsum:%f, mu1:%f, mu2:%f\n", intermediate_sum, mu1, mu2);
 
         // Minimize intra-class variance = maximize inter-class variance
-        variance = q1 * q2 * pow(mu1 - mu2, 2);
+        variance = q1 * q2 * (mu1 - mu2)*(mu1 - mu2);
         printf("var:%f max:%f\n", variance, max_variance);  
         if (variance >= max_variance) {
             threshold = i;
