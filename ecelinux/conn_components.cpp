@@ -32,8 +32,8 @@ pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[2
   if(in == 0){
     return 255;
   }
-  bit A = (y == 0) ? 0 : in_buffer[width];
-  bit B = (x == 0) ? 0 : in_buffer[1];
+  bit A = (y == 0) ? (bit)0 : in_buffer[width];
+  bit B = (x == 0) ? (bit)0 : in_buffer[1];
   if(A == 0 && B == 0){
     output = labelNo;
     un_class[labelNo] = labelNo;
@@ -51,9 +51,10 @@ pixel conn_comp_1st_pass( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[2
 
   if(A == 1){ 
     for(int i = 1; i < width; i++){
-      if (in_buffer[i] != 0 && labelA <= (*out_buffer)((i*8) + 7, (i*8))){
+      pixel class_check = (*out_buffer)((i*8) + 7, (i*8));
+      if (in_buffer[i] != 0 && labelA <= class_check){
         (*out_buffer)((i*8) + 7, (i*8)) = labelA;
-        if(labelA < 10) printf("i am doing god's work %d %d\n", i, labelA.to_int());
+      //  if(labelA < 10) printf("i am doing god's work %d %d\n", i, labelA.to_int());
       } 
       else return output;
     }

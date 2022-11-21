@@ -44,13 +44,13 @@ void dut(
         // Update the histogram
         update_histogram(input_lo, histogram);
     }
-    printf("histogram: [");
-    for(int i = 0; i < 256; i++){
-      printf("%d,", histogram[i]);
-    }
-    printf("]\n");
+    // printf("histogram: [");
+    // for(int i = 0; i < 256; i++){
+    //   printf("%d,", histogram[i]);
+    // }
+    // printf("]\n");
     threshold_value = otsu(histogram);
-    printf("threshold value: %d\n", threshold_value.to_int());
+    // printf("threshold value: %d\n", threshold_value.to_int());
     strm_out.write(threshold_value);
   } else {
     for(int j = 0; j < 42025; j++){

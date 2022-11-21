@@ -14,6 +14,8 @@ set_top dut
 
 # Add design and testbench files
 add_files digitrec.cpp
+add_files otsu.cpp
+add_files conn_components.cpp
 add_files -tb digitrec_test.cpp
 add_files -tb data
 
