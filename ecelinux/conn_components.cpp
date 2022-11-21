@@ -8,11 +8,6 @@
 pixel labelNoB = 1;
 pixel labelNoW = 1;
 
-//pixel labelA;
-//pixel labelB;
-//pixel labelC;
-//pixel labelD;
-//
 pixel outputB;
 pixel outputW;
 
@@ -58,25 +53,9 @@ pixel conn_comp_1st_pass_black( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
   }
   bit A = y == 0? (bit)1: in_buffer[width];
   bit B = x== 0? (bit)1: in_buffer[1];
-  bit C = ((x==0)||(y==0))?(bit)1: in_buffer[width+1];//8
+  bit C = ((x==0)||(y==0))?(bit)1: in_buffer[width];// REMOVED + 1
   bit D = ((x==width-1)||(y==0))?(bit)1: in_buffer[width-1];
-  //bit A = 1;
-  //if( y !=0){
-  //  A = in_buffer[width];
-  //}
-  //bit B =1;
-  //if(x != 0){
-  //  B = in_buffer[1];
-  //}
-//
-  //bit C = 1;
-  //if( x != 0 && y != 0){
-  //  C = in_buffer[width+1];
-  //}
-  //bit D = 1;
-  //if( (x != width -1) && (y != 0)){
-  //  D = in_buffer[width-1];
-  //}
+
   if(A && B && C && D){
     outputB= labelNoB;
     un_class[labelNoB] = labelNoB;
@@ -87,7 +66,7 @@ pixel conn_comp_1st_pass_black( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
 
     pixel labelA = (*out_buffer)(width*8+7,width*8);
     pixel labelB = (*out_buffer)(15,8);
-    pixel labelC = (*out_buffer)((width+1)*8+7,(width+1)*8);
+    pixel labelC = (*out_buffer)((width)*8+7,(width)*8); // REMOVED + 1
     pixel labelD = (*out_buffer)((width-1)*8+7,(width-1)*8);
 
     int option_1 = un_class_method_black(A, B, C, D, labelA, labelB, labelC, labelD, un_class);
@@ -114,25 +93,8 @@ pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
   }
   bit A = y == 0? (bit)0: in_buffer[width];
   bit B = x== 0? (bit)0: in_buffer[1];
-  bit C = ((x==0)||(y==0))?(bit)0: in_buffer[width+1];//8
+  bit C = ((x==0)||(y==0))?(bit)0: in_buffer[width]; // REMOVED + 1
   bit D = ((x==width-1)||(y==0))?(bit)0: in_buffer[width-1];
-  //bit A = 0;
-  //if( y !=0){
-  //  A = in_buffer[width];
-  //}
-  //bit B =0;
-  //if(x != 0){
-  //  B = in_buffer[1];
-  //}
-//
-  //bit C = 0;
-  //if( x != 0 && y != 0){
-  //  C = in_buffer[width+1];
-  //}
-  //bit D = 0;
-  //if( (x != width -1) && (y != 0)){
-  //  D = in_buffer[width-1];
-  //}
 
   if(A==0 && B==0 && C==0 && D==0){
     outputW= labelNoW;
@@ -144,7 +106,7 @@ pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
 
     pixel labelA = (*out_buffer)(width*8+7,width*8);
     pixel labelB = (*out_buffer)(15,8);
-    pixel labelC = (*out_buffer)((width+1)*8+7,(width+1)*8);
+    pixel labelC = (*out_buffer)((width)*8+7,(width)*8); // REMOVED + 1
     pixel labelD = (*out_buffer)((width-1)*8+7,(width-1)*8);
 
     int option_1 = un_class_method_white(A, B, C, D, labelA, labelB, labelC, labelD, un_class);
