@@ -42,6 +42,24 @@ int main()
   hls::stream<bit32_t> in_stream;
   hls::stream<pixel> out_stream;
 
+  std::string test_str = "5d_5_2_1_4_5.txt";
+
+  std::string subset2 = test_str.substr(0,1);
+  int num_digits = atoi(subset2.c_str());
+  int dice_values[num_digits];
+
+  int current_index = 3;
+  for (int i = 0; i < num_digits; i++) {
+    dice_values[i] = atoi(test_str.substr(current_index, 1).c_str());
+    current_index += 2;
+  }
+
+  for (int i = 0; i < num_digits; i++) {
+    printf("BRYCE: %d \n", dice_values[i]);
+  }
+
+
+
   // Number of test instances
   const int N = 42025;
   
