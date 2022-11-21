@@ -37,7 +37,8 @@ int main()
   std::string line;
   //std::ifstream myfile ("data/output_formatted.txt");
   //std::ifstream myfile ("output/5d14353.txt");
-  std::ifstream myfile ("5d26361.txt");
+  std::ifstream myfile ("6d426425.txt");
+  //std::ifstream myfile ("7d4623155.txt");
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> in_stream;
@@ -102,21 +103,27 @@ int main()
     }
 
     dut( in_stream, out_stream, rows, cols, 0);
+    for (int i = 0; i < 7; ++i ) {
+    //  // Write words to the device
+      int dice = out_stream.read();
+      printf("value of one dice is %d\n", dice);
+       outfile << dice << "\n";
+    }
 
-    int count = 0;
-    for (int i = 0; i < (168100); ++i ) {
-      // Write words to the device
-      pixel conn_comp = out_stream.read();
-
-      outfile << conn_comp.to_int() << "\n";
-      count++;
+    //int count = 0;
+    //for (int i = 0; i < (168100); ++i ) {
+    //  // Write words to the device
+    //  pixel conn_comp = out_stream.read();
+//
+    //  outfile << conn_comp.to_int() << "\n";
+    //  count++;
       //printf("iteration: %d \n", count);
 
       // if (count >= 410) {
       //   outfile << "\n";
       //   count = 0;
       // }
-    }
+    //}
 
 
     // for (int i = 0; i < N; ++i ) {
