@@ -20,9 +20,9 @@ typedef ap_uint<49> digit;
 
 typedef ap_uint<8> pixel;
 typedef ap_uint<1> bit;
-typedef ap_uint<COL+1> buf_bit;
-typedef ap_uint<(COL+1)*8> buf_8;
-typedef ap_uint<(COL+1)*6> buf_6;
-typedef ap_uint<(COL+1)*3> buf_3;
+typedef ap_uint<COL+2> buf_bit;
+typedef ap_uint<(COL+2)*8> buf_8;
+typedef ap_uint<(COL+2)*6> buf_6;
+typedef ap_uint<(COL+2)*3> buf_3;
 
 #endif

@@ -60,7 +60,7 @@ int main()
   hls::stream<bit32_t> in_stream;
   hls::stream<pixel> out_stream;
 
-  std::string test_str = "5d_5_2_1_4_5.txt";
+  std::string test_str = "5d_1_4_3_5_3.txt";
 
   std::string subset2 = test_str.substr(0,1);
   int num_digits = atoi(subset2.c_str());
@@ -73,7 +73,7 @@ int main()
   }
 
   for (int i = 0; i < num_digits; i++) {
-    printf("BRYCE: %d \n", dice_values[i]);
+    printf("INPUT NUM: %d \n", dice_values[i]);
   }
 
 
@@ -138,39 +138,24 @@ int main()
 
     dut( in_stream, out_stream, rows, cols, 0);
 
+    // Analyze the outputs
     int count = 0;
-    for (int i = 0; i < (168100); ++i ) {
-      // Write words to the device
-      pixel conn_comp = out_stream.read();
+    int num_correct = 0;
+    int num_tests = 0;
 
-      outfile << conn_comp.to_int() << "\n";
-      count++;
-      // printf("iteration: %d \n", count);
+    for (int i = 0; i < num_digits; ++i ) {
+      int dice_num = out_stream.read();
+      printf("Dice Classification: %d \n", dice_num);
 
-      // if (count >= 410) {
-      //   outfile << "\n";
-      //   count = 0;
-      // }
+      if (dice_num == dice_values[i]) {
+        num_correct++;
+      }
+      num_tests++;
     }
 
-
-    // for (int i = 0; i < N; ++i ) {
-    //   // Read input from array and split into two 32-bit words
-    //   bit32_t input_lo = inputs[i].range(31,0);
-    //   // Write words to the device
-    //   in_stream.write( input_lo );
-    // }
-
-    // for (int i = 0; i < N; ++i ) {
-    //   // Call design under test (DUT)
-    //   dut( in_stream, out_stream );
-    //   // Read result
-    //   for(int i = 0; i < 4; i++){
-    //     pixel threshold_pixel = out_stream.read();
-    //     printf("%d", threshold_pixel.to_int());
-    //   }
-    //   num_test_insts++;  
-    // }   
+    std::cout << "Overall Accuracy Rate = " << std::setprecision(3)
+              << ( (double)num_correct / num_tests ) * 100
+              << "% \n";
 
     timer.stop();
     
