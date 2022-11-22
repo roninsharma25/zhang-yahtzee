@@ -11,8 +11,6 @@
 
 pixel otsu(int histogram[]);
 
-int sum(int a, int b);
-
 void update_histogram(bit32_t pixel_value, int histogram[]);
 
 bit threshold_image(pixel input, pixel threshold_input);
