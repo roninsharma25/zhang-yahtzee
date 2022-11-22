@@ -49,10 +49,13 @@ void run_algorithm(string file_name) {
   string subset2 = file_name.substr(0,1);
   int num_digits = atoi(subset2.c_str());
   int dice_values[num_digits];
+  int dice_values_acc[6] = {0, 0, 0, 0, 0, 0};
 
   int current_index = 3;
   for (int i = 0; i < num_digits; i++) {
-    dice_values[i] = atoi(file_name.substr(current_index, 1).c_str());
+    int num = atoi(file_name.substr(current_index, 1).c_str());
+    dice_values[i] = num;
+    dice_values_acc[num - 1] += 1;
     current_index += 2;
   }
 
@@ -124,13 +127,18 @@ void run_algorithm(string file_name) {
     for (int i = 0; i < num_digits; ++i ) {
       int dice_num = out_stream.read();
       printf("Dice Classification: %d \n", dice_num);
-
-      if (dice_num == dice_values[i]) {
-        num_correct++;
-      }
+      dice_values_acc[dice_num - 1] -= 1;
       num_tests++;
     }
 
+    int num_wrong = 0; 
+    for (int i = 0; i < 6; i++){
+      printf("Dice %d: %d \n", i, dice_values_acc[i]);
+      if (dice_values_acc[i] > 0){
+        num_wrong += dice_values_acc[i];
+      } 
+    }
+    num_correct += num_digits - num_wrong;
     timer.stop();
     
     // Close input file for the testing set
@@ -160,7 +168,7 @@ int main()
       if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
-        if (count2 >= 20) break;
+        if (count2 >= 50) break;
       }
     }
     closedir(dr);
