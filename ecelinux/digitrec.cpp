@@ -23,6 +23,7 @@ buf_8 out_bufferW = 0;
 pixel un_classW[256];
 pixel un_class[256];
 pixel label[256];
+int size[256];
 int dice_value[256];
 int zero_n = 0;
 int row_value = 0;
@@ -67,6 +68,7 @@ void dut(
       un_classW[m] = 0;
       label[m] = 0;
       dice_value[m] = 0;
+      size[m] = 0;
     }
     for(int j = 0; j < 42025; j++){
       // Read the two input 32-bit words (low word first)
@@ -88,6 +90,7 @@ void dut(
         out_bufferW(7,0) = connected_cW;
         connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
         out_buffer(7,0) = connected_c;
+        size[connected_c] +=1;
         column_value += 1;
         if (column_value >= COL) {
           row_value+=1;
@@ -97,22 +100,30 @@ void dut(
       }
     }
     int black_dots = 0;
-    for (int k= 1; k<256; k++){
+    for (int k= 255; k>=0; k--){
       int add = 1;
+      int add2 = 1;
       int name = un_class[k];
-      for (int m= 1; m<256; m++){
+      for (int m= 0; m<255; m++){
         if(name == un_class[m] && m<k){
           add = 0;
+          if(add2){
+            size[m] += size[k];
+            add2 = 0;
+          }
         }
       }
       if(add){
         black_dots++;
+        //printf("black dot size %d\n", size[k]);
+        bool cont = size[k]>10 && size[k]<100;
         pixel next_W = un_classW[label[name]];
-        if(next_W != 0){
+        if(next_W != 0 && cont){
           dice_value[next_W] +=1;
         }
       }
     }
+    printf("black dots %d", black_dots);
     int count = 0;
     for (int l = 0; l<256; l++){
       if(dice_value[l]>0){

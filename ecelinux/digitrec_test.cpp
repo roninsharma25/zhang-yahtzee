@@ -160,7 +160,7 @@ int main()
       if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
-        if (count2 >= 5) break;
+        if (count2 >= 20) break;
       }
     }
     closedir(dr);
