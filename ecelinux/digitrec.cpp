@@ -70,14 +70,14 @@ void dut(
         pixel connected_c;
         pixel connected_cW;
         int out_c;
-        in_buffer(COL,1) = in_buffer(COL-1,0);
+        in_buffer(COL+1,1) = in_buffer(COL,0);
         in_buffer[0] = threshold_bit;
-        out_buffer((COL)*8 + 7,8) = out_buffer((COL-1)*8 + 7,0);
-        out_bufferW((COL)*8 + 7,8) = out_bufferW((COL-1)*8 + 7,0);
-        connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
+        out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
+        out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
         connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
-        out_buffer(7,0) = connected_c;
         out_bufferW(7,0) = connected_cW;
+        connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
+        out_buffer(7,0) = connected_c;
         column_value += 1;
         if (column_value >= COL) {
           row_value+=1;
