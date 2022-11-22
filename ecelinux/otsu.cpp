@@ -9,7 +9,14 @@ using namespace std;
 
 // LARGEST PIXEL VALUE CURRENTLY SET TO 255
 int threshold;
-float weighted_sum, intermediate_sum, q1, q2, mu1, mu2, variance, max_variance;
+float weighted_sum = 0;
+float intermediate_sum = 0;
+float q1 = 0;
+float q2 = 0;
+float mu1 = 0;
+float mu2 = 0;
+float variance = 0;
+float max_variance = 0;
 
 // Class 1: pixels below current threshold
 // Class 2: pixels above current threshold
@@ -34,6 +41,7 @@ void update_histogram(bit32_t pixel_value, int histogram[]) {
 pixel otsu(int histogram[]) {
     // printf("i am in otsu\n");
     // Calculate the weighted sum of all bins
+    weighted_sum = 0;
     for (int i = 0; i < 256; i++) {
         weighted_sum += i * histogram[i];
     }
@@ -41,6 +49,10 @@ pixel otsu(int histogram[]) {
     q1 = 0.0f;
     q2 = 0.0f;
     // Calculate variances
+    intermediate_sum = 0;
+    mu1 = 0;
+    mu2 = 0;
+    max_variance = 0;
     for (int i = 0; i < 256; i++) {
         // printf("histogram[%d] = %d\n", i, histogram[i]);
         q1 += histogram[i];
