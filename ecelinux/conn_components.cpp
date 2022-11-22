@@ -9,32 +9,25 @@ pixel labelNoW = 1;
 pixel outputB;
 pixel outputW;
 
-int un_class_method_black(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[256]) {
-  if ( (A == 0) && ((labelA <= labelB) || B == 1) && ((labelA <= labelC) || C == 1) && ((labelA <= labelD) || D == 1 )) {
+int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[256], bit type) {
+
+  if ( (A == type) && ((labelA <= labelB) || B == !type) && ((labelA <= labelC) || C == !type) && ((labelA <= labelD) || D == !type )) {
+    if (type) {
+      outputW = labelA;
+    } else {
+      outputB = labelA;
+    }
     outputB = labelA;
-    if (B == 0) un_class[labelB] = labelA;
-    if (C == 0) un_class[labelC] = labelA;
-    if (D == 0) un_class[labelD] = labelA;
+    if (B == type) un_class[labelB] = labelA;
+    if (C == type) un_class[labelC] = labelA;
+    if (D == type) un_class[labelD] = labelA;
 
     return 0;
   }
 
   return 1;
+
 }
-
-int un_class_method_white(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[256]) {
-  if ( (A == 1) && ((labelA <= labelB) || B == 0) && ((labelA <= labelC) || C == 0) && ((labelA <= labelD) || D == 0 )) {
-    outputW = labelA;
-    if (B == 1) un_class[labelB] = labelA;
-    if (C == 1) un_class[labelC] = labelA;
-    if (D == 1) un_class[labelD] = labelA;
-
-    return 0;
-  }
-
-  return 1;
-}
-
 
 pixel conn_comp_1st_pass_black(buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y, pixel label[256], buf_8 out_bufferW) {
   bit in = in_buffer[0];
@@ -61,11 +54,11 @@ pixel conn_comp_1st_pass_black(buf_bit in_buffer, buf_8 *out_buffer, pixel un_cl
     pixel labelC = (*out_buffer)( (width+1)*8+7, (width+1)*8 );
     pixel labelD = (*out_buffer)( (width-1)*8+7, (width-1)*8 );
 
-    int option_1 = un_class_method_black(A, B, C, D, labelA, labelB, labelC, labelD, un_class);
+    int option_1 = un_class_method(A, B, C, D, labelA, labelB, labelC, labelD, un_class, 0);
     int option_2, option_3;
-    if (option_1) option_2 = un_class_method_black(B, A, C, D, labelB, labelA, labelC, labelD, un_class);
-    if (option_1 && option_2) option_3 = un_class_method_black(C, A, B, D, labelC, labelA, labelB, labelD, un_class);
-    if (option_1 && option_2 && option_3) un_class_method_black(D, A, B, C, labelD, labelA, labelB, labelC, un_class);
+    if (option_1) option_2 = un_class_method(B, A, C, D, labelB, labelA, labelC, labelD, un_class, 0);
+    if (option_1 && option_2) option_3 = un_class_method(C, A, B, D, labelC, labelA, labelB, labelD, un_class, 0);
+    if (option_1 && option_2 && option_3) un_class_method(D, A, B, C, labelD, labelA, labelB, labelC, un_class, 0);
   }
 
   return outputB;
@@ -95,11 +88,11 @@ pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
     pixel labelC = (*out_buffer)( (width+1)*8+7, (width+1)*8 );
     pixel labelD = (*out_buffer)( (width-1)*8+7, (width-1)*8 );
 
-    int option_1 = un_class_method_white(A, B, C, D, labelA, labelB, labelC, labelD, un_class);
+    int option_1 = un_class_method(A, B, C, D, labelA, labelB, labelC, labelD, un_class, 1);
     int option_2, option_3;
-    if (option_1) option_2 = un_class_method_white(B, A, C, D, labelB, labelA, labelC, labelD, un_class);
-    if (option_1 && option_2) option_3 = un_class_method_white(C, A, B, D, labelC, labelA, labelB, labelD, un_class);
-    if (option_1 && option_2 && option_3) un_class_method_white(D, A, B, C, labelD, labelA, labelB, labelC, un_class);
+    if (option_1) option_2 = un_class_method(B, A, C, D, labelB, labelA, labelC, labelD, un_class, 1);
+    if (option_1 && option_2) option_3 = un_class_method(C, A, B, D, labelC, labelA, labelB, labelD, un_class, 1);
+    if (option_1 && option_2 && option_3) un_class_method(D, A, B, C, labelD, labelA, labelB, labelC, un_class, 1);
   }
 
   return outputW;
