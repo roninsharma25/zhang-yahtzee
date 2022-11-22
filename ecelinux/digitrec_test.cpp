@@ -11,6 +11,8 @@
 #include "digitrec.h"
 #include "timer.h"
 
+#include <dirent.h>
+
 //------------------------------------------------------------------------
 // Helper function for hex to int conversion
 //------------------------------------------------------------------------
@@ -29,6 +31,22 @@ int64_t hexstring_to_int64 (std::string h) {
 //------------------------------------------------------------------------
 int main() 
 {
+  DIR *dr;
+  struct dirent *en;
+  dr = opendir("data");
+  if (dr) {
+    // Loop through all files in the directory
+    while ((en = readdir(dr)) != NULL) {
+      std::string s = en->d_name;
+      if (s.find("txt") != std::string::npos) {
+        std::cout << s << "\n";
+
+
+      }
+    }
+    closedir(dr);
+   }
+      
   // Output file that saves the test bench results
   std::ofstream outfile;
   outfile.open("output/out_conn_comp.txt");
