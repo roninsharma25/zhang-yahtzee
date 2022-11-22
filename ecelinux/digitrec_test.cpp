@@ -16,10 +16,12 @@
 int num_correct = 0;
 int num_tests = 0;
 
+using namespace std;
+
 //------------------------------------------------------------------------
 // Helper function for hex to int conversion
 //------------------------------------------------------------------------
-int64_t hexstring_to_int64 (std::string h) {
+int64_t hexstring_to_int64 (string h) {
   int64_t x = 0;
   for (int i = 0; i < h.length(); ++i) {
     char c = h[i];
@@ -29,22 +31,22 @@ int64_t hexstring_to_int64 (std::string h) {
   return x;
 }
 
-void run_algorithm(std::string file_name) {
-    // Output file that saves the test bench results
-  std::ofstream outfile;
+void run_algorithm(string file_name) {
+  // Output file that saves the test bench results
+  ofstream outfile;
   outfile.open("output/out_conn_comp.txt");
   
   // Read input file for the testing set
-  std::string line;
-  std::string data_path = "data/";
-  std::string input_file_path = data_path + file_name;
-  std::ifstream myfile (input_file_path.c_str());
+  string line;
+  string data_path = "data/";
+  string input_file_path = data_path + file_name;
+  ifstream myfile (input_file_path.c_str());
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> in_stream;
   hls::stream<pixel> out_stream;
 
-  std::string subset2 = file_name.substr(0,1);
+  string subset2 = file_name.substr(0,1);
   int num_digits = atoi(subset2.c_str());
   int dice_values[num_digits];
 
@@ -78,13 +80,11 @@ void run_algorithm(std::string file_name) {
 
 
   if ( myfile.is_open() ) {
-    assert( std::getline( myfile, line) );
-    // std::string row_string = line.substr(0, line.find(","));
-    // std::string col_string = line.substr(line.find(", "), line.length());
+    assert( getline( myfile, line) );
     for (int i = 0; i < N; ++i) {
-      assert( std::getline( myfile, line) );
+      assert( getline( myfile, line) );
       // Read handwritten digit input
-      std::string hex_digit = line.substr(2);
+      string hex_digit = line.substr(2);
       bit32_t input_digit = hexstring_to_int64 (hex_digit);
       // Store the digits into arrays
       inputs[i] = input_digit;
@@ -138,7 +138,7 @@ void run_algorithm(std::string file_name) {
     
   }
   else
-      std::cout << "Unable to open file for the testing set!" << std::endl; 
+      cout << "Unable to open file for the testing set!" << endl; 
   
   // Close output file
   outfile.close();
@@ -156,8 +156,8 @@ int main()
     // Loop through all files in the directory
     int count2 = 0;
     while ((en = readdir(dr)) != NULL) {
-      std::string file_name = en->d_name;
-      if (file_name.find("txt") != std::string::npos) {
+      string file_name = en->d_name;
+      if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
         if (count2 >= 5) break;
@@ -166,7 +166,7 @@ int main()
     closedir(dr);
   }
 
-  std::cout << "Overall Accuracy Rate = " << std::setprecision(3)
+  cout << "Overall Accuracy Rate = " << setprecision(3)
               << ( (double)num_correct / num_tests ) * 100
               << "% \n";
 
