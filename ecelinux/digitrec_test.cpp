@@ -105,7 +105,7 @@ void run_algorithm(std::string file_name) {
     //--------------------------------------------------------------------
     // Execute the digitrec sim and receive data
     //--------------------------------------------------------------------
-    dut( in_stream, out_stream, rows, cols, 1);
+    dut( in_stream, out_stream, 0, 0, 1);
 
     pixel threshold_value = out_stream.read();
 

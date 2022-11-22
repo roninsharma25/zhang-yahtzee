@@ -48,6 +48,9 @@ int un_class_method_white(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB
 
 pixel conn_comp_1st_pass_black( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y, pixel label[256], buf_8 out_bufferW) {
   bit in = in_buffer[0];
+  if(x == 0 && y ==0){
+    labelNoB = 1;
+  }
   if(in==1){
     return 0;
   }
@@ -88,6 +91,9 @@ pixel conn_comp_1st_pass_black( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
 
 pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y) {
   bit in = in_buffer[0];
+  if (x == 0 && y == 0){
+    labelNoW = 1;
+  }
   if(in==0){
     return 0;
   }

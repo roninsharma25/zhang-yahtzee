@@ -35,6 +35,16 @@ void dut(
     int otsu_mode
 )
 {
+  if(rows == 0 && cols == 0){
+    in_buffer = 0;
+    out_buffer = 0;
+    zero_n = 0;
+    row_value = 0;
+    column_value = 0;
+    first = 1;
+    count = 0;
+    otsu_mode = 1;
+  }
   int pixels = rows * cols;
 
   if(otsu_mode){
