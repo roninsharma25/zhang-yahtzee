@@ -39,17 +39,39 @@ int main(int argc, char** argv)
     fprintf (stderr, "Failed to open Xillybus device channels\n");
     exit(-1);
   }
+
+  // Output file that saves the test bench results
+  ofstream outfile;
+  outfile.open("output/out_conn_comp.txt");
   
   // Read input file for the testing set
-  std::string line;
-  std::ifstream myfile ("data/testing_set.dat");
+  string line;
+  string data_path = "data/";
+  string input_file_path = data_path + file_name;
+  ifstream myfile (input_file_path.c_str());
+
+  string subset2 = file_name.substr(0,1);
+  int num_digits = atoi(subset2.c_str());
+  int dice_values[num_digits];
+  int dice_values_acc[6] = {0, 0, 0, 0, 0, 0};
+
+  int current_index = 3;
+  for (int i = 0; i < num_digits; i++) {
+    int num = atoi(file_name.substr(current_index, 1).c_str());
+    dice_values[i] = num;
+    dice_values_acc[num - 1] += 1;
+    current_index += 2;
+  }
+
+  for (int i = 0; i < num_digits; i++) {
+    printf("INPUT NUM: %d \n", dice_values[i]);
+  }
   
   // Number of test instances
-  const int N = 180;
+  const int N = 42025;
   
   // Arrays to store test data and expected results
-  digit inputs[N];
-  int   expecteds[N];
+  bit32_t inputs[N];
 
   // Timer
   Timer timer("digitrec FPGA");
@@ -57,7 +79,9 @@ int main(int argc, char** argv)
   int nbytes;
   int error = 0;
   int num_test_insts = 0;
-  bit32_t interpreted_digit;
+  int rows = 410;
+  int cols = 410;
+  bit32_t threshold_value;
 
 
   if ( myfile.is_open() ) {
@@ -65,59 +89,94 @@ int main(int argc, char** argv)
     //--------------------------------------------------------------------
     // Read data from the input file into two arrays
     //--------------------------------------------------------------------
+    assert( getline( myfile, line) );
     for (int i = 0; i < N; ++i) {
-      assert( std::getline( myfile, line) );
+      assert( getline( myfile, line) );
       // Read handwritten digit input
-      std::string hex_digit = line.substr(2, line.find(",")-2);
-      digit input_digit = hexstring_to_int64 (hex_digit);
-      // Read expected digit
-      int input_value =
-          strtoul(line.substr(line.find(",") + 1,
-                              line.length()).c_str(), NULL, 10);
-   
+      string hex_digit = line.substr(2);
+      bit32_t input_digit = hexstring_to_int64 (hex_digit);
       // Store the digits into arrays
       inputs[i] = input_digit;
-      expecteds[i] = input_value;
     }
+
 
     timer.start();
 
     //--------------------------------------------------------------------
     // Add your code here to communicate with the hardware module
     //--------------------------------------------------------------------
-    digit test_digit;
-    for (int i = 0; i < sizeof(inputs), i++){
-      test_digit = inputs[i];
 
-      bit64_t test_digit_i;
-      test_digit_i(test_digit.length()-1,0) = test_digit(test_digit.length()-1,0);
-      int64_t input = test_digit_i;
 
-      nbytes = write (fdw, (void*)&test_digit, sizeof(test_digit);
-      assert(nbytes == sizeof(test_digit));
+    //--------------------------------------------------------------------
+    // Send data digitrec
+    //--------------------------------------------------------------------
+    for (int i = 0; i < sizeof(inputs); ++i ) {
+      // Read input from array and split into two 32-bit words
+      bit32_t input_lo = inputs[i].range(31,0);
+      // Write words to the device
+      //in_stream.write( input_lo );
+      nbytes = write (fdw, (void*)&input_lo, sizeof(input_lo));
+      assert(nbytes == sizeof(input_lo));
 
-      int32_t guess_out;
-      nbytes = read (fdr, (void*)&guess_out, sizeof(guess_out));
-      assert (nbytes == sizeof(guess_out));
+    }
 
-      int guess_i = guess_out;
-      if(guess_i != expecteds[i]) error++;
-    }  
+    //--------------------------------------------------------------------
+    // Execute the digitrec sim and receive data
+    //--------------------------------------------------------------------
+    //dut( in_stream, out_stream, 0, 0, 1);
 
+    //pixel threshold_value = out_stream.read();
+
+    pixel threshold_value;
+    nbytes = read (fdr, (void*)&threshold_value, sizeof(threshold_value));
+    assert (nbytes == sizeof(threshold_value));
+
+    printf("threshold value: %d \n", threshold_value.to_int());
+
+    for (int i = 0; i < N; ++i ) {
+      // Read input from array and split into two 32-bit words
+      bit32_t input_lo = inputs[i].range(31,0);
+      // Write words to the device
+      //in_stream.write( input_lo );
+      nbytes = write (fdw, (void*)&input_lo, sizeof(input_lo));
+      assert(nbytes == sizeof(input_lo));
+    }
+
+    //dut( in_stream, out_stream, rows, cols, 0);
+
+    // Analyze the outputs
+    for (int i = 0; i < num_digits; ++i ) {
+      //int dice_num = out_stream.read();
+      int dice_num;
+      
+      nbytes = read (fdr, (void*)&dice_num, sizeof(dice_num));
+      assert (nbytes == sizeof(dice_num));
+
+      dice_values_acc[dice_num - 1] -= 1;
+      num_tests++;
+    }
+
+    int num_wrong = 0; 
+    for (int i = 0; i < 6; i++){
+      
+      if (dice_values_acc[i] > 0){
+        num_wrong += dice_values_acc[i];
+      } 
+    }
+    num_correct += num_digits - num_wrong;
 
     timer.stop();
     
-    // Report overall error out of all testing instances
-    std::cout << "Number of test instances = " << num_test_insts << std::endl;
-    std::cout << "Overall Error Rate = " << std::setprecision(3)
-              << ( (double)error / num_test_insts ) * 100
-              << "%" << std::endl;
- 
+    printf("Dice Classification: %d \n", dice_num);
+    printf("Dice %d: %d \n", i, dice_values_acc[i]);
+
     // Close input file for the testing set
     myfile.close();
   }
   else
       std::cout << "Unable to open file for the testing set!" << std::endl; 
-  
+  // Close output file
+  outfile.close();
+
   return 0;
 }

@@ -1,10 +1,10 @@
 
 #ifndef NUM_PIXELS
-#define NUM_PIXELS 168100
+#define NUM_PIXELS 44100
 #endif
 
 #ifndef ROW
-#define ROW 410
+#define ROW 210
 #endif
 
 #include "typedefs.h"

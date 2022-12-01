@@ -66,19 +66,19 @@ void run_algorithm(string file_name) {
 
 
   // Number of test instances
-  const int N = 42025;
+  const int N = 11025;
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
 
   // Timer
-  Timer timer("digitrec FPGA");
+  Timer timer("Dice Kernel");
   
   int nbytes;
   int error = 0;
   int num_test_insts = 0;
-  int rows = 410;
-  int cols = 410;
+  int rows = 210;
+  int cols = 210;
   bit32_t threshold_value;
 
 
@@ -108,11 +108,9 @@ void run_algorithm(string file_name) {
     //--------------------------------------------------------------------
     // Execute the digitrec sim and receive data
     //--------------------------------------------------------------------
-    dut( in_stream, out_stream, 0, 0, 1);
+    dut( in_stream, out_stream, rows, cols, 1);
 
     pixel threshold_value = out_stream.read();
-
-    printf("threshold value: %d \n", threshold_value.to_int());
 
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
@@ -123,6 +121,8 @@ void run_algorithm(string file_name) {
 
     dut( in_stream, out_stream, rows, cols, 0);
 
+    timer.stop();
+    printf("threshold value: %d \n", threshold_value.to_int());
     // Analyze the outputs
     for (int i = 0; i < num_digits; ++i ) {
       int dice_num = out_stream.read();
@@ -139,7 +139,6 @@ void run_algorithm(string file_name) {
       } 
     }
     num_correct += num_digits - num_wrong;
-    timer.stop();
     
     // Close input file for the testing set
     myfile.close();
@@ -159,7 +158,7 @@ int main()
 {
   DIR *dr;
   struct dirent *en;
-  dr = opendir("data");
+  dr = opendir("small_data");
   if (dr) {
     // Loop through all files in the directory
     int count2 = 0;
@@ -168,7 +167,7 @@ int main()
       if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
-        if (count2 >= 50) break;
+        if (count2 >= 1) break;
       }
     }
     closedir(dr);
