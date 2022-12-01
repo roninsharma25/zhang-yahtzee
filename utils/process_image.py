@@ -10,7 +10,7 @@ def load_data_from_file(file_name):
     # Convert image to grayscale
     img = Image.open( file_name ).convert('L')
     img.load()
-    data = np.asarray( img, dtype = 'int8' ) #was int32
+    data = np.asarray( img, dtype = 'int32' ) #was int32
 
     return data
 
@@ -55,9 +55,11 @@ def data_analysis(data):
             column += 1
         row_data.append(row_largest)
         row += 1
-
+        
     row_data_sort = copy.deepcopy(row_data)
     row_data_sort.sort()
+    print(row_data)
+    print(row_data_sort)
     row = 0
     for pixel_value in data: 
         if (row_data[row] > row_data_sort[MAX_ROW]): 
@@ -93,7 +95,7 @@ def column_remove(data, column_data, row_num):
         row.append(0)
     for x in range(row_num, MAX_ROW):
         temp.append(row)
-    return np.asarray(temp, dtype = 'int8') #may need to change to uint32? 
+    return np.asarray(temp, dtype = 'int32') #may need to change to uint32? 
 
 def create_image(image_array, file_name):
     image = Image.fromarray(image_array, mode="L") 
