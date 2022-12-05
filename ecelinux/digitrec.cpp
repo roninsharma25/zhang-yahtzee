@@ -28,6 +28,8 @@ int dice_value[256];
 int zero_n = 0;
 int row_value = 0;
 int column_value = 0;
+pixel labelNoB = 1;
+pixel labelNoW = 1;
 void dut(
     hls::stream<bit32_t> &strm_in,
     hls::stream<pixel> &strm_out,
@@ -86,9 +88,9 @@ void dut(
         in_buffer[0] = threshold_bit;
         out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
         out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
-        connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
+        connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value, &labelNoW);
         out_bufferW(7,0) = connected_cW;
-        connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
+        connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW, &labelNoB);
         out_buffer(7,0) = connected_c;
         size[connected_c] +=1;
         column_value += 1;
@@ -99,6 +101,21 @@ void dut(
 
       }
     }
+    //two input buffers
+    //four output buffers
+    //two un_class
+    //two un_classW
+    //two label
+    //two size
+    //label number input to connected components
+    //store middle labeled lines
+    
+    //divide black dot, 1/2 black dot un_class = 0
+    //add a check in douple for loop to exclude 0
+    //add size[2nd half]+= 1st halft
+    //split white dot
+    //2nd half, start with higher noW, 1-100 for 1st laft and 100 to 256 for 2nd
+    //combine white dot, un_class[] = 2nd half number
     int black_dots = 0;
     for (int k= 255; k>=0; k--){
       int add = 1;
