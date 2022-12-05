@@ -13,15 +13,10 @@
 
 #include <dirent.h>
 
-int num_correct = 0;
-int num_tests = 0;
-
-using namespace std;
-
 //------------------------------------------------------------------------
 // Helper function for hex to int conversion
 //------------------------------------------------------------------------
-int64_t hexstring_to_int64 (string h) {
+int64_t hexstring_to_int64 (std::string h) {
   int64_t x = 0;
   for (int i = 0; i < h.length(); ++i) {
     char c = h[i];
@@ -31,31 +26,49 @@ int64_t hexstring_to_int64 (string h) {
   return x;
 }
 
-void run_algorithm(string file_name) {
+//------------------------------------------------------------------------
+// Digitrec testbench
+//------------------------------------------------------------------------
+int main() 
+{
+  DIR *dr;
+  struct dirent *en;
+  dr = opendir("data");
+  //if (dr) {
+  //  // Loop through all files in the directory
+  //  while ((en = readdir(dr)) != NULL) {
+  //    std::string s = en->d_name;
+  //    if (s.find("txt") != std::string::npos) {
+  //      std::cout << s << "\n";
+//
+//
+  //    }
+  //  }
+  //  closedir(dr);
+  // }
+      
   // Output file that saves the test bench results
-  ofstream outfile;
+  std::ofstream outfile;
   outfile.open("output/out_conn_comp.txt");
   
   // Read input file for the testing set
-  string line;
-  string data_path = "data/";
-  string input_file_path = data_path + file_name;
-  ifstream myfile (input_file_path.c_str());
+  std::string line;
+  //std::ifstream myfile ("data/output_formatted.txt");
+  std::ifstream myfile ("data/5d_1_4_3_5_3.txt");
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> in_stream;
   hls::stream<pixel> out_stream;
 
-  string subset2 = file_name.substr(0,1);
+  std::string test_str = "5d_1_4_3_5_3.txt";
+
+  std::string subset2 = test_str.substr(0,1);
   int num_digits = atoi(subset2.c_str());
   int dice_values[num_digits];
-  int dice_values_acc[6] = {0, 0, 0, 0, 0, 0};
 
   int current_index = 3;
   for (int i = 0; i < num_digits; i++) {
-    int num = atoi(file_name.substr(current_index, 1).c_str());
-    dice_values[i] = num;
-    dice_values_acc[num - 1] += 1;
+    dice_values[i] = atoi(test_str.substr(current_index, 1).c_str());
     current_index += 2;
   }
 
@@ -66,7 +79,8 @@ void run_algorithm(string file_name) {
 
 
   // Number of test instances
-  const int N = 11025;
+  const int N = 42025;
+ //const int N = 11025;
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
@@ -83,11 +97,13 @@ void run_algorithm(string file_name) {
 
 
   if ( myfile.is_open() ) {
-    assert( getline( myfile, line) );
+    assert( std::getline( myfile, line) );
+    // std::string row_string = line.substr(0, line.find(","));
+    // std::string col_string = line.substr(line.find(", "), line.length());
     for (int i = 0; i < N; ++i) {
-      assert( getline( myfile, line) );
+      assert( std::getline( myfile, line) );
       // Read handwritten digit input
-      string hex_digit = line.substr(2);
+      std::string hex_digit = line.substr(2);
       bit32_t input_digit = hexstring_to_int64 (hex_digit);
       // Store the digits into arrays
       inputs[i] = input_digit;
@@ -108,7 +124,7 @@ void run_algorithm(string file_name) {
     //--------------------------------------------------------------------
     // Execute the digitrec sim and receive data
     //--------------------------------------------------------------------
-    dut( in_stream, out_stream, 0, 0, 1);
+    dut( in_stream, out_stream, rows, cols, 1);
 
     pixel threshold_value = out_stream.read();
 
@@ -124,21 +140,24 @@ void run_algorithm(string file_name) {
     dut( in_stream, out_stream, rows, cols, 0);
 
     // Analyze the outputs
+    int count = 0;
+    int num_correct = 0;
+    int num_tests = 0;
+
     for (int i = 0; i < num_digits; ++i ) {
       int dice_num = out_stream.read();
       printf("Dice Classification: %d \n", dice_num);
-      dice_values_acc[dice_num - 1] -= 1;
+
+      if (dice_num == dice_values[i]) {
+        num_correct++;
+      }
       num_tests++;
     }
 
-    int num_wrong = 0; 
-    for (int i = 0; i < 6; i++){
-      printf("Dice %d: %d \n", i + 1, dice_values_acc[i]);
-      if (dice_values_acc[i] > 0){
-        num_wrong += dice_values_acc[i];
-      } 
-    }
-    num_correct += num_digits - num_wrong;
+    std::cout << "Overall Accuracy Rate = " << std::setprecision(3)
+              << ( (double)num_correct / num_tests ) * 100
+              << "% \n";
+
     timer.stop();
     
     // Close input file for the testing set
@@ -146,37 +165,10 @@ void run_algorithm(string file_name) {
     
   }
   else
-      cout << "Unable to open file for the testing set!" << endl; 
+      std::cout << "Unable to open file for the testing set!" << std::endl; 
   
   // Close output file
   outfile.close();
-}
-
-//------------------------------------------------------------------------
-// Digitrec testbench
-//------------------------------------------------------------------------
-int main() 
-{
-  DIR *dr;
-  struct dirent *en;
-  dr = opendir("data");
-  if (dr) {
-    // Loop through all files in the directory
-    int count2 = 0;
-    while ((en = readdir(dr)) != NULL) {
-      string file_name = en->d_name;
-      if (file_name.find("txt") != string::npos) {
-        run_algorithm(file_name);
-        count2++;
-        if (count2 >= 10) break;
-      }
-    }
-    closedir(dr);
-  }
-
-  cout << "Overall Accuracy Rate = " << setprecision(3)
-              << ( (double)num_correct / num_tests ) * 100
-              << "% \n";
 
   return 0;
 }

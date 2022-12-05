@@ -21,6 +21,16 @@ csim: digitrec.cpp digitrec_test.cpp otsu.cpp conn_components.cpp
 	g++ ${CFLAGS} $^ -o digitrec -lrt
 	./digitrec
 
+csim_one: digitrec.cpp digitrec_test_one.cpp otsu.cpp conn_components.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_one -lrt
+	./digitrec_one
+
+csim_two: digitrec_alt.cpp digitrec_test_one.cpp otsu.cpp conn_components_alt.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_two -lrt
+	./digitrec_two
+
 bitstream: 
 	@echo "Synthesizing digitrec and creating bitstream on amdpool ..."
 	vivado_hls -f run_pipeline.tcl
