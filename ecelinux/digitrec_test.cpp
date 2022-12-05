@@ -66,7 +66,7 @@ void run_algorithm(string file_name) {
 
 
   // Number of test instances
-  const int N = 11025;
+  const int N = 42025;
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
