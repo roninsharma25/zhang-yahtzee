@@ -66,7 +66,7 @@ void dut(
         // Update the histogram
         update_histogram(input_lo, histogram);
     }
-    threshold_value = otsu(histogram);
+    threshold_value = 107; //otsu(histogram);
     //printf("threshold value: %d\n", threshold_value.to_int());
     strm_out.write(threshold_value);
   } else {
