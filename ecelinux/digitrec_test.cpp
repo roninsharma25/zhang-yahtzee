@@ -133,7 +133,7 @@ void run_algorithm(string file_name) {
 
     int num_wrong = 0; 
     for (int i = 0; i < 6; i++){
-      printf("Dice %d: %d \n", i, dice_values_acc[i]);
+      printf("Dice %d: %d \n", i + 1, dice_values_acc[i]);
       if (dice_values_acc[i] > 0){
         num_wrong += dice_values_acc[i];
       } 
@@ -168,7 +168,7 @@ int main()
       if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
-        if (count2 >= 50) break;
+        if (count2 >= 10) break;
       }
     }
     closedir(dr);

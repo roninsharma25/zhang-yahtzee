@@ -16,10 +16,25 @@ CFLAGS = -g -I${VHLS_INC}
 
 all: csim
 
-csim: digitrec.cpp digitrec_test.cpp otsu.cpp conn_components.cpp
+csim_base: digitrec.cpp digitrec_test.cpp otsu.cpp conn_components.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
-	g++ ${CFLAGS} $^ -o digitrec -lrt
-	./digitrec
+	g++ ${CFLAGS} $^ -o digitrec_base -lrt
+	./digitrec_base
+
+csim_alt: digitrec_alt.cpp digitrec_test.cpp otsu.cpp conn_components_alt.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_alt -lrt
+	./digitrec_alt
+
+csim_one_base: digitrec.cpp digitrec_test_one.cpp otsu.cpp conn_components.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_one -lrt
+	./digitrec_one
+
+csim_one_alt: digitrec_alt.cpp digitrec_test_one.cpp otsu.cpp conn_components_alt.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_two -lrt
+	./digitrec_two
 
 csim_one: digitrec.cpp digitrec_test_one.cpp otsu.cpp conn_components.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
