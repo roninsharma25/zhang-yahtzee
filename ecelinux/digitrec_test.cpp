@@ -63,10 +63,7 @@ void run_algorithm(string file_name) {
     printf("INPUT NUM: %d \n", dice_values[i]);
   }
 
-
-
   // Number of test instances
-  //const int N = 42025;
   const int N = (ROW*COL)/4; 
   
   // Arrays to store test data and expected results
@@ -103,17 +100,17 @@ void run_algorithm(string file_name) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
       // Write words to the device
-      in_stream.write( input_lo );
+      //in_stream.write( input_lo );
     }
 
     //--------------------------------------------------------------------
     // Execute the digitrec sim and receive data
     //--------------------------------------------------------------------
-    dut( in_stream, out_stream, 0, 0, 1);
+    //dut( in_stream, out_stream, 0, 0, 1);
 
-    pixel threshold_value = out_stream.read();
+    //pixel threshold_value = out_stream.read();
 
-    printf("threshold value: %d \n", threshold_value.to_int());
+    //printf("threshold value: %d \n", threshold_value.to_int());
 
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
@@ -122,7 +119,7 @@ void run_algorithm(string file_name) {
       in_stream.write( input_lo );
     }
 
-    dut( in_stream, out_stream, rows, cols, 0);
+    dut( in_stream, out_stream, rows, cols );
 
     // Analyze the outputs
     for (int i = 0; i < num_digits; ++i ) {
