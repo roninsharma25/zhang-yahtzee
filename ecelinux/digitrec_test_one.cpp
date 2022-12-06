@@ -34,6 +34,7 @@ int main()
   DIR *dr;
   struct dirent *en;
   dr = opendir("data");
+
   //if (dr) {
   //  // Loop through all files in the directory
   //  while ((en = readdir(dr)) != NULL) {
@@ -79,8 +80,10 @@ int main()
 
 
   // Number of test instances
-  const int N = 42025;
- //const int N = 11025;
+
+ // const int N = 42025;
+ const int N = 11025;
+
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];

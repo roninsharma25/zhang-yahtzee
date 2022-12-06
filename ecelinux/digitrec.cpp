@@ -53,7 +53,7 @@ void dut(
       histogram[i] = 0;
     }
 
-    for(int i = 0; i < 42025; i++){
+    for(int i = 0; i < 11025; i++){
       // Read the two input 32-bit words (low word first)
         bit32_t input_lo = strm_in.read();
         // Update the histogram
@@ -70,7 +70,7 @@ void dut(
       dice_value[m] = 0;
       size[m] = 0;
     }
-    for(int j = 0; j < 42025; j++){
+    for(int j = 0; j < 11025; j++){
       // Read the two input 32-bit words (low word first)
       bit32_t input_lo = strm_in.read();
       // Update the histogram
