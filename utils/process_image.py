@@ -11,7 +11,7 @@ def load_data_from_file(file_name):
     # Convert image to grayscale
     img = Image.open( file_name ).convert('L')
     img.load()
-    data = np.asarray( img, dtype = 'uint8' ) #was int32
+    data = np.asarray( img, dtype = 'int32' ) #was int32
 
     return data
 
@@ -96,7 +96,7 @@ def column_remove(data, column_data, row_num):
         row.append(0)
     for x in range(row_num, MAX_ROW):
         temp.append(row)
-    return np.asarray(temp, dtype = 'uint8') #may need to change to uint32? 
+    return np.asarray(temp, dtype = 'int32') #may need to change to uint32? 
 
 def create_image(image_array, file_name):
     image = Image.fromarray(image_array, mode="L") 
