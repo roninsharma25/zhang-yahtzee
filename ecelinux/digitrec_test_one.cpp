@@ -82,7 +82,7 @@ int main()
   // Number of test instances
 
  // const int N = 42025;
- const int N = 11025;
+ const int N = (ROW * COL) /4;
 
   
   // Arrays to store test data and expected results

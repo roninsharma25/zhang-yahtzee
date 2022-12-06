@@ -18,7 +18,7 @@ int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixe
     } else {
       outputB = labelA;
     }
-    outputB = labelA;
+    //outputB = labelA;
 
     if (B == type && un_class[labelB] < labelA && un_class[labelB] != 0) labelA = un_class[labelB]; 
     if (C == type && un_class[labelC] < labelA && un_class[labelC] != 0) labelA = un_class[labelC]; 

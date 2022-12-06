@@ -54,13 +54,13 @@ void dut(
     otsu_mode = 1;
   }
   int pixels = rows * cols;
-
+  int N = (ROW*COL)/4;
   if(otsu_mode){
     for (int i = 0; i < 256; i++){
       histogram[i] = 0;
     }
 
-    for(int i = 0; i < 42025; i++){
+    for(int i = 0; i < N; i++){
       // Read the two input 32-bit words (low word first)
         bit32_t input_lo = strm_in.read();
         // Update the histogram
@@ -78,7 +78,7 @@ void dut(
       dice_value[m] = 0;
       size[m] = 0;
     }
-    for(int j = 0; j < 42025; j++){
+    for(int j = 0; j < N; j++){
       // Read the two input 32-bit words (low word first)
       bit32_t input_lo = strm_in.read();
       // Update the histogram
