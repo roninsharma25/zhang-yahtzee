@@ -28,8 +28,8 @@ int dice_value[256];
 int zero_n = 0;
 int row_value = 0;
 int column_value = 0;
-pixel labelNoB = 1;
-pixel labelNoW = 1;
+pixel labelNoB;
+pixel labelNoW;
 void dut(
     hls::stream<bit32_t> &strm_in,
     hls::stream<pixel> &strm_out,

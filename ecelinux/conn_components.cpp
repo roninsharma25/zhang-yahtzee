@@ -63,8 +63,8 @@ pixel conn_comp_1st_pass_black(buf_bit in_buffer, buf_8 *out_buffer, pixel un_cl
   if (A && B && C && D) {
   
     outputB = *labelNoB;
-    un_class[*labelNoB] = *labelNoB;
-    label[*labelNoB] = out_bufferW(15,8);
+    un_class[outputB] = outputB;
+    label[outputB] = out_bufferW(15,8);
     *labelNoB++;
     //assert (labelNoB<256);
 
@@ -114,11 +114,11 @@ pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_c
     pixel labelC = (*out_buffer)( (width+1)*8+7, (width+1)*8 );
     pixel labelD = (*out_buffer)( (width-1)*8+7, (width-1)*8 );
 
-    int option_1 = un_class_method(A, B, C, D, labelA, labelB, labelC, labelD, un_class, 1, &outputW);
+    int option_1 = un_class_method(A, B, C, D, labelA, labelB, labelC, labelD, un_class, 1);
     int option_2, option_3;
-    if (option_1) option_2 = un_class_method(B, A, C, D, labelB, labelA, labelC, labelD, un_class, 1, &outputW );
-    if (option_1 && option_2) option_3 = un_class_method(C, A, B, D, labelC, labelA, labelB, labelD, un_class, 1, &outputW);
-    if (option_1 && option_2 && option_3) un_class_method(D, A, B, C, labelD, labelA, labelB, labelC, un_class, 1, &outputW);
+    if (option_1) option_2 = un_class_method(B, A, C, D, labelB, labelA, labelC, labelD, un_class, 1 );
+    if (option_1 && option_2) option_3 = un_class_method(C, A, B, D, labelC, labelA, labelB, labelD, un_class, 1);
+    if (option_1 && option_2 && option_3) un_class_method(D, A, B, C, labelD, labelA, labelB, labelC, un_class, 1);
   }
 
   return outputW;
