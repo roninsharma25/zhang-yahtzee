@@ -117,6 +117,22 @@ int main()
     //--------------------------------------------------------------------
     // Send data digitrec
     //--------------------------------------------------------------------
+    // for (int i = 0; i < N; ++i ) {
+    //   // Read input from array and split into two 32-bit words
+    //   bit32_t input_lo = inputs[i].range(31,0);
+    //   // Write words to the device
+    //   in_stream.write( input_lo );
+    // }
+
+    // //--------------------------------------------------------------------
+    // // Execute the digitrec sim and receive data
+    // //--------------------------------------------------------------------
+    // dut( in_stream, out_stream, rows, cols, 1);
+
+    // pixel threshold_value = out_stream.read();
+
+    // printf("threshold value: %d \n", threshold_value.to_int());
+
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
@@ -124,23 +140,7 @@ int main()
       in_stream.write( input_lo );
     }
 
-    //--------------------------------------------------------------------
-    // Execute the digitrec sim and receive data
-    //--------------------------------------------------------------------
-    dut( in_stream, out_stream, rows, cols, 1);
-
-    pixel threshold_value = out_stream.read();
-
-    printf("threshold value: %d \n", threshold_value.to_int());
-
-    for (int i = 0; i < N; ++i ) {
-      // Read input from array and split into two 32-bit words
-      bit32_t input_lo = inputs[i].range(31,0);
-      // Write words to the device
-      in_stream.write( input_lo );
-    }
-
-    dut( in_stream, out_stream, rows, cols, 0);
+    dut( in_stream, out_stream);
 
     // Analyze the outputs
     int count = 0;

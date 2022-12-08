@@ -3,10 +3,6 @@
 #define NUM_PIXELS 44100
 #endif
 
-#ifndef ROW
-#define ROW 210
-#endif
-
 #include "typedefs.h"
 
 pixel otsu(int histogram[]);

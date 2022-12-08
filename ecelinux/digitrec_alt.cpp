@@ -11,17 +11,12 @@
 
 
 #include "digitrec.h"
-#include "otsu.h"
 #include "conn_components_alt.h"
 
 //----------------------------------------------------------
 // Top function
 //----------------------------------------------------------
 
-
-int first = 1;
-int histogram[256];
-int count = 0;
 pixel threshold_value = 107;
 buf_bit in_buffer = 0;
 buf_8 out_buffer = 0;
@@ -36,21 +31,9 @@ int row_value = 0;
 int column_value = 0;
 void dut(
   hls::stream<bit32_t> &strm_in,
-  hls::stream<pixel> &strm_out,
-  int rows,
-  int cols
+  hls::stream<pixel> &strm_out
 )
 {
-  if(rows == 0 && cols == 0){
-    in_buffer = 0;
-    out_buffer = 0;
-    zero_n = 0;
-    row_value = 0;
-    column_value = 0;
-    first = 1;
-    count = 0;
-  }
-  int pixels = rows * cols;
   int N = (ROW*COL)/4;
 
   for(int m = 0; m<256; m++){
@@ -70,7 +53,7 @@ void dut(
     int not_zero = 1; 
     for(int i = 3; i >= 0; i--){
       pixel chunk = input_lo((i << 3) + 7, (i << 3));
-      threshold_bit[i] = threshold_image(chunk, threshold_value);
+      threshold_bit[i] = (chunk.to_int() >= threshold_value.to_int());
       if (threshold_bit[i] == 0) not_one = 0;
       if (threshold_bit[i] == 1) not_zero = 0; 
     } 
