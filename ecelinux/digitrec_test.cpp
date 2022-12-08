@@ -119,7 +119,7 @@ void run_algorithm(string file_name) {
       in_stream.write( input_lo );
     }
 
-    dut( in_stream, out_stream, rows, cols );
+    dut( in_stream, out_stream );
 
     // Analyze the outputs
     for (int i = 0; i < num_digits; ++i ) {
