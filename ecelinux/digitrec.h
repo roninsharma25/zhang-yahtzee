@@ -16,6 +16,6 @@ void dut(
     hls::stream<pixel> &strm_out
 );
 
-void bazinga(baz bazingo, baz bazingum, bit4_t threshold_bit);
+void bazinga(baz bazingo, bit4_t threshold_bit);
 
 #endif

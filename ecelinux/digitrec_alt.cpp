@@ -32,15 +32,15 @@ pixel column_value = 0;
 pixel connected_c;
 pixel connected_cW;
 
-void bazinga(baz bazingo, baz bazingum, bit4_t threshold_bit) {
+void bazinga(baz bazingo, bit4_t threshold_bit) {
+
+  // Left shift the input buffer by one bit, and add the 
+  in_buffer(COL+1,1) = in_buffer(COL,0);     
+  in_buffer[0] = threshold_bit[bazingo];
 
   // Left shift both buffers by 8 bits
   out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
   out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
-
-  // Left shift the input buffer by one bit, and add the 
-  in_buffer(COL+1,1) = in_buffer(COL,0);     
-  in_buffer[0] = threshold_bit[bazingo]; // 3 for the if 
 
   connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
   out_bufferW(7,0) = connected_cW;
@@ -78,10 +78,10 @@ void dut(
     int out_c;
 
     if ((threshold_bit == 15 || threshold_bit == 0) && column_value < COL - 4){
-      bazinga(3, 3, threshold_bit);
+      bazinga(3, threshold_bit);
 
-      out_buffer((COL+3)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
-      out_bufferW((COL+3)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
+      out_buffer((COL+3)*8 + 7,24) = out_buffer((COL)*8 + 7,0);
+      out_bufferW((COL+3)*8 + 7,24) = out_bufferW((COL)*8 + 7,0);
       for (int i = 2; i >= 0; i--){
         out_bufferW(i*8 + 7,i*8) = connected_cW;
         out_buffer(i*8 + 7,i*8) = connected_c;
@@ -90,14 +90,14 @@ void dut(
       in_buffer(COL+3, 3) = in_buffer(COL, 0);
       in_buffer(2,0) = threshold_bit(2,0);     
 
-      size[connected_c] +=4;
+      size[connected_c] += 4;
       if ((threshold_bit == 15)) link_pixel(in_buffer, &out_bufferW, un_classW, COL, connected_cW, 1);
       if ((threshold_bit == 0)) link_pixel(in_buffer, &out_buffer, un_class, COL, connected_c, 0);
       column_value += 4;     
     }
     else {
       for (int i = 3; i >= 0; i--){
-        bazinga(i, 1, threshold_bit);
+        bazinga(i, threshold_bit);
 
         size[connected_c] +=1;
         column_value += 1;
