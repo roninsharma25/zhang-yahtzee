@@ -29,24 +29,24 @@ bit4_t dice_value[256];
 pixel row_value = 0;
 pixel column_value = 0;
 
+pixel connected_c;
+pixel connected_cW;
+
 void bazinga(baz bazingo, baz bazingum, bit4_t threshold_bit) {
 
   // Left shift both buffers by 8 bits
-  out_buffer((COL+bazingum)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
-  out_bufferW((COL+bazingum)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
+  out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
+  out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
 
   // Left shift the input buffer by one bit, and add the 
   in_buffer(COL+1,1) = in_buffer(COL,0);     
   in_buffer[0] = threshold_bit[bazingo]; // 3 for the if 
 
-  pixel connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
+  connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
   out_bufferW(7,0) = connected_cW;
 
-  pixel connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
+  connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
   out_buffer(7,0) = connected_c;
-
-
-
 }
 
 void dut(
@@ -74,13 +74,14 @@ void dut(
       pixel chunk = input_lo((i << 3) + 7, (i << 3));
       threshold_bit[i] = (chunk >= threshold_value);
     } 
-    pixel connected_c;
-    pixel connected_cW;
+    
     int out_c;
 
     if ((threshold_bit == 15 || threshold_bit == 0) && column_value < COL - 4){
       bazinga(3, 3, threshold_bit);
 
+      out_buffer((COL+3)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
+      out_bufferW((COL+3)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
       for (int i = 2; i >= 0; i--){
         out_bufferW(i*8 + 7,i*8) = connected_cW;
         out_buffer(i*8 + 7,i*8) = connected_c;
@@ -98,12 +99,6 @@ void dut(
       for (int i = 3; i >= 0; i--){
         bazinga(i, 1, threshold_bit);
 
-        connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
-        out_bufferW(7,0) = connected_cW;
-        //std::cout << "white " << connected_cW << std::endl;
-        connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
-        out_buffer(7,0) = connected_c;
-        //std::cout << "black " << connected_c << std::endl;
         size[connected_c] +=1;
         column_value += 1;
         if (column_value >= COL) {
