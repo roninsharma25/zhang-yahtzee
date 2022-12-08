@@ -24,11 +24,10 @@ buf_8 out_bufferW = 0;
 pixel un_classW[256];
 pixel un_class[256];
 pixel label[256];
-int size[256];
-int dice_value[256];
-int zero_n = 0;
-int row_value = 0;
-int column_value = 0;
+bit16_t size[128];
+bit4_t dice_value[256];
+pixel row_value = 0;
+pixel column_value = 0;
 void dut(
   hls::stream<bit32_t> &strm_in,
   hls::stream<pixel> &strm_out
@@ -49,45 +48,47 @@ void dut(
     bit32_t input_lo = strm_in.read();
     // Update the histogram
     bit4_t threshold_bit;
-    int not_one = 1;
-    int not_zero = 1; 
+
     for(int i = 3; i >= 0; i--){
       pixel chunk = input_lo((i << 3) + 7, (i << 3));
-      threshold_bit[i] = (chunk.to_int() >= threshold_value.to_int());
-      if (threshold_bit[i] == 0) not_one = 0;
-      if (threshold_bit[i] == 1) not_zero = 0; 
+      threshold_bit[i] = (chunk >= threshold_value);
     } 
     pixel connected_c;
     pixel connected_cW;
     int out_c;
-    //printf("%d Start: one: %d zero: %d \n", j, not_one, not_zero);
-    if ((threshold_bit == 15 || threshold_bit == 0) && column_value < COL - 4){
-      //printf("HERE\n");
-      out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
-      out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
-      in_buffer(COL+1,1) = in_buffer(COL,0);     
-      in_buffer[0] = threshold_bit[3]; 
-      connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
-      out_bufferW(7,0) = connected_cW;
-      connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
-      out_buffer(7,0) = connected_c;
-      //std::cout << "white " << connected_cW << std::endl;
-      out_bufferW((COL+3)*8 + 7, 24) = out_bufferW((COL)*8 + 7,0);
-      out_buffer((COL+3)*8 + 7, 24) = out_buffer((COL)*8 + 7, 0); 
-      for (int i = 2; i >= 0; i--){
-        //out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
-        //out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
-        out_bufferW(i*8 + 7,i*8) = connected_cW;
-        out_buffer(i*8 + 7,i*8) = connected_c;
-      }
-      in_buffer(COL+3, 3) = in_buffer(COL, 0);
-      in_buffer(2,0) = threshold_bit(2,0);       
-      size[connected_c] +=4;
-      if ((threshold_bit == 15)) link_pixel(in_buffer, &out_bufferW, un_classW, COL, connected_cW, 1);
-      if ((threshold_bit == 0)) link_pixel(in_buffer, &out_buffer, un_class, COL, connected_c, 0);
-      column_value += 4;     
-    }
-    else {
+
+    // if ((threshold_bit == 15 || threshold_bit == 0) && column_value < COL - 4){
+    //   // Left shift both buffers by 8 bits
+    //   out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
+    //   out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
+
+    //   // Left shift the input buffer by one bit, and add the 
+    //   in_buffer(COL+1,1) = in_buffer(COL,0);     
+    //   in_buffer[0] = threshold_bit[3]; 
+
+    //   connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value);
+    //   out_bufferW(7,0) = connected_cW;
+
+    //   connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
+    //   out_buffer(7,0) = connected_c;
+
+    //   out_bufferW((COL+3)*8 + 7, 24) = out_bufferW((COL)*8 + 7,0);
+    //   out_buffer((COL+3)*8 + 7, 24) = out_buffer((COL)*8 + 7, 0); 
+
+    //   for (int i = 2; i >= 0; i--){
+    //     out_bufferW(i*8 + 7,i*8) = connected_cW;
+    //     out_buffer(i*8 + 7,i*8) = connected_c;
+    //   }
+
+    //   in_buffer(COL+3, 3) = in_buffer(COL, 0);
+    //   in_buffer(2,0) = threshold_bit(2,0);     
+
+    //   size[connected_c] +=4;
+    //   if ((threshold_bit == 15)) link_pixel(in_buffer, &out_bufferW, un_classW, COL, connected_cW, 1);
+    //   if ((threshold_bit == 0)) link_pixel(in_buffer, &out_buffer, un_class, COL, connected_c, 0);
+    //   column_value += 4;     
+    // }
+    //else {
       for (int i = 3; i >= 0; i--){
         in_buffer(COL+1,1) = in_buffer(COL,0);
         in_buffer[0] = threshold_bit[i];
@@ -106,7 +107,7 @@ void dut(
           column_value = 0;
         }
       }
-    }
+    //}
       // Connected components     
   }
   int black_dots = 0;
@@ -140,10 +141,13 @@ void dut(
   }
   //printf("black dots %d", black_dots);
   int count = 0;
+  //printf("dice_value: [");
   for (int l = 0; l<256; l++){
     if(dice_value[l]>0){
       strm_out.write(dice_value[l]);
       count++;
     }
+    //printf(" %d ", dice_value[l].to_int());
   }
+  //printf("]");
 }

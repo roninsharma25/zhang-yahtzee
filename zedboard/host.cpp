@@ -42,14 +42,31 @@ int main(int argc, char** argv)
   
   // Read input file for the testing set
   std::string line;
-  std::ifstream myfile ("data/testing_set.dat");
+  std::ifstream myfile ("data/5d_1_4_3_5_3.txt");
   
+  std::string test_str = "5d_1_4_3_5_3.txt";
+
+  std::string subset2 = test_str.substr(0,1);
+  int num_digits = atoi(subset2.c_str());
+  int dice_values[num_digits];
+  int dice_retrieved_values[num_digits];
+
+  int current_index = 3;
+  for (int i = 0; i < num_digits; i++) {
+    dice_values[i] = atoi(test_str.substr(current_index, 1).c_str());
+    current_index += 2;
+  }
+
+  for (int i = 0; i < num_digits; i++) {
+    printf("INPUT NUM: %d \n", dice_values[i]);
+  }
+
+
   // Number of test instances
-  const int N = 180;
+  const int N = (ROW * COL) /4;
   
   // Arrays to store test data and expected results
-  digit inputs[N];
-  int   expecteds[N];
+  bit32_t inputs[N];
 
   // Timer
   Timer timer("digitrec FPGA");
@@ -62,22 +79,12 @@ int main(int argc, char** argv)
 
   if ( myfile.is_open() ) {
     
-    //--------------------------------------------------------------------
-    // Read data from the input file into two arrays
-    //--------------------------------------------------------------------
+    assert( std::getline( myfile, line) );
     for (int i = 0; i < N; ++i) {
       assert( std::getline( myfile, line) );
-      // Read handwritten digit input
-      std::string hex_digit = line.substr(2, line.find(",")-2);
-      digit input_digit = hexstring_to_int64 (hex_digit);
-      // Read expected digit
-      int input_value =
-          strtoul(line.substr(line.find(",") + 1,
-                              line.length()).c_str(), NULL, 10);
-   
-      // Store the digits into arrays
+      std::string hex_digit = line.substr(2);
+      bit32_t input_digit = hexstring_to_int64 (hex_digit);
       inputs[i] = input_digit;
-      expecteds[i] = input_value;
     }
 
     timer.start();
@@ -85,33 +92,56 @@ int main(int argc, char** argv)
     //--------------------------------------------------------------------
     // Add your code here to communicate with the hardware module
     //--------------------------------------------------------------------
-    digit test_digit;
-    for (int i = 0; i < sizeof(inputs), i++){
-      test_digit = inputs[i];
 
-      bit64_t test_digit_i;
-      test_digit_i(test_digit.length()-1,0) = test_digit(test_digit.length()-1,0);
-      int64_t input = test_digit_i;
 
-      nbytes = write (fdw, (void*)&test_digit, sizeof(test_digit);
-      assert(nbytes == sizeof(test_digit));
+    for (int i = 0; i < N; ++i ) {
+      // Read input from array and split into two 32-bit words
+      bit32_t input_lo = inputs[i].range(31,0);
+      // Write words to the device
+      nbytes = write (fdw, (void*)&input_lo, sizeof(input_lo);
+      assert(nbytes == sizeof(input_lo));
+    }
 
-      int32_t guess_out;
-      nbytes = read (fdr, (void*)&guess_out, sizeof(guess_out));
-      assert (nbytes == sizeof(guess_out));
+    int count = 0;
+    int num_correct = 0;
+    int num_tests = 0;
 
-      int guess_i = guess_out;
-      if(guess_i != expecteds[i]) error++;
-    }  
+    for (int i = 0; i < num_digits; ++i ) {
+      bit32_t dice_num;
+      nbytes = read (fdr, (void*)&dice_num, sizeof(dice_num));
+      assert (nbytes == sizeof(dice_num));
+      dice_retrieved_values[i] = dice_num;
+      if (dice_num == dice_values[i]) {
+        num_correct++;
+      }
+      num_tests++;
+    }
+
+    // for (int i = 0; i < sizeof(inputs), i++){
+    //   test_digit = inputs[i];
+
+    //   nbytes = write (fdw, (void*)&test_digit, sizeof(test_digit);
+    //   assert(nbytes == sizeof(test_digit));
+
+    //   int32_t guess_out;
+    //   nbytes = read (fdr, (void*)&guess_out, sizeof(guess_out));
+    //   assert (nbytes == sizeof(guess_out));
+
+    //   int guess_i = guess_out;
+    //   if(guess_i != expecteds[i]) error++;
+    // }  
 
 
     timer.stop();
     
+    for (int i = 0; i < num_digits; ++i ) {
+      printf("Dice Classification: %d \n", dice_retrieved_values[i]);
+    }
+
     // Report overall error out of all testing instances
-    std::cout << "Number of test instances = " << num_test_insts << std::endl;
-    std::cout << "Overall Error Rate = " << std::setprecision(3)
-              << ( (double)error / num_test_insts ) * 100
-              << "%" << std::endl;
+    std::cout << "Overall Accuracy Rate = " << std::setprecision(3)
+              << ( (double)num_correct / num_tests ) * 100
+              << "% \n";
  
     // Close input file for the testing set
     myfile.close();

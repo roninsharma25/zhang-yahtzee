@@ -14,6 +14,7 @@
 typedef ap_uint<3> bit3_t;
 typedef ap_uint<4> bit4_t;
 typedef ap_uint<6> bit6_t;
+typedef ap_uint<16> bit16_t;
 typedef ap_uint<32> bit32_t;
 typedef ap_uint<64> bit64_t;
 typedef ap_uint<49> digit;

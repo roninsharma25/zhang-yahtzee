@@ -92,10 +92,6 @@ int main()
   Timer timer("digitrec FPGA");
   
   int nbytes;
-  int error = 0;
-  int num_test_insts = 0;
-  int rows = 410;
-  int cols = 410;
   bit32_t threshold_value;
 
 
