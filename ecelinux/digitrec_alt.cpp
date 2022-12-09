@@ -77,13 +77,23 @@ void dut(
     
     int out_c;
 
-    if ((threshold_bit == 15 || threshold_bit == 0) && column_value < COL - 4){
-      bazinga(3, threshold_bit);
+    if (threshold_bit == 0 && column_value < COL - 4){
+      //bazinga(3, threshold_bit);
+
+      in_buffer(COL+1,1) = in_buffer(COL,0);     
+      in_buffer[0] = threshold_bit[3];
+
+      out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
+      out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
+
+      connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW);
+      out_bufferW(7,0) = 0;
+      out_buffer(7,0) = connected_c;
 
       out_buffer((COL+3)*8 + 7,24) = out_buffer((COL)*8 + 7,0);
       out_bufferW((COL+3)*8 + 7,24) = out_bufferW((COL)*8 + 7,0);
+      out_bufferW(23,0) = 0;
       for (int i = 2; i >= 0; i--){
-        out_bufferW(i*8 + 7,i*8) = connected_cW;
         out_buffer(i*8 + 7,i*8) = connected_c;
       }
 
@@ -91,8 +101,8 @@ void dut(
       in_buffer(2,0) = threshold_bit(2,0);     
 
       size[connected_c] += 4;
-      if ((threshold_bit == 15)) link_pixel(in_buffer, &out_bufferW, un_classW, COL, connected_cW, 1);
-      if ((threshold_bit == 0)) link_pixel(in_buffer, &out_buffer, un_class, COL, connected_c, 0);
+      //if ((threshold_bit == 15)) link_pixel(in_buffer, &out_bufferW, un_classW, COL, connected_cW, 1);
+      link_pixel(in_buffer, &out_buffer, un_class, COL, connected_c, 0);
       column_value += 4;     
     }
     else {
