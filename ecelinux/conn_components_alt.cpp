@@ -10,7 +10,7 @@ pixel outputB;
 pixel outputW;
 
 int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[256], bit type) {
-
+  
   if ( (A == type) && ((labelA <= labelB) || B == !type) && ((labelA <= labelC) || C == !type) && ((labelA <= labelD) || D == !type )) {
     //printf("s");
     if (type) {
