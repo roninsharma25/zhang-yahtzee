@@ -33,7 +33,7 @@ csim_one_base: digitrec.cpp digitrec_test_one.cpp conn_components.cpp
 
 csim_one_alt: digitrec_alt.cpp digitrec_test_one.cpp conn_components_alt.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
-	g++ ${CFLAGS} $^ -o digitrec_two -lrt
+	g++ ${CFLAGS} $^ -o digitrec_one_alt -lrt
 	./digitrec_two
 
 csim_one: digitrec.cpp digitrec_test_one.cpp otsu.cpp conn_components.cpp
@@ -53,7 +53,7 @@ csim_two: digitrec_alt.cpp digitrec_test_one.cpp otsu.cpp conn_components.cpp
 
 bitstream: 
 	@echo "Synthesizing digitrec and creating bitstream on amdpool ..."
-	vivado_hls -f run_base.tcl
+	vivado_hls -f run_alt.tcl
 	./run_bitstream.sh
 
 clean:

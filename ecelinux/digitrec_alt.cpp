@@ -144,7 +144,9 @@ void dut(
   //printf("dice_value: [");
   for (int l = 0; l<256; l++){
     if(dice_value[l]>0){
-      strm_out.write(dice_value[l]);
+      bit32_t output = 0;
+      output(3, 0) = dice_value[l];
+      strm_out.write(output);
       count++;
     }
     //printf(" %d ", dice_value[l].to_int());

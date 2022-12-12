@@ -98,7 +98,7 @@ int main(int argc, char** argv)
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
       // Write words to the device
-      nbytes = write (fdw, (void*)&input_lo, sizeof(input_lo);
+      nbytes = write (fdw, (void*)&input_lo, sizeof(input_lo));
       assert(nbytes == sizeof(input_lo));
     }
 

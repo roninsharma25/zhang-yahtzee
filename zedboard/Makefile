@@ -15,7 +15,7 @@ all: sw
 
 sw: digitrec.cpp digitrec_test.cpp
 	@echo "Compiling & executing digitrec software program on ARM ..."
-	g++ ${CFLAGS} digitrec.cpp digitrec_test.cpp -o digitrec-arm
+	g++ ${CFLAGS} digitrec_alt.cpp conn_components_alt.cpp digitrec_test_one.cpp -o digitrec-arm
 	./digitrec-arm
 
 fpga: host.cpp
