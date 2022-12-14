@@ -14,16 +14,31 @@ VHLS_INC ?= ${VHLS_PATH}/include
 
 CFLAGS = -g -I${VHLS_INC} 
 
-all: csim
+all: csim_alt
 
-csim: digitrec.cpp digitrec_test.cpp otsu.cpp conn_components.cpp
+csim_alt: digitrec_alt.cpp digitrec_test.cpp otsu.cpp conn_components_alt.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
-	g++ ${CFLAGS} $^ -o digitrec -lrt
-	./digitrec
+	g++ ${CFLAGS} $^ -o digitrec_alt -lrt
+	./digitrec_alt
+
+csim_one_base: digitrec.cpp digitrec_base_test_one.cpp otsu.cpp conn_components.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_one -lrt
+	./digitrec_one
+
+csim_one_alt: digitrec_alt.cpp digitrec_test_one.cpp conn_components_alt.cpp
+	@echo "Compiling & simulating digitrec on amdpool ..."
+	g++ ${CFLAGS} $^ -o digitrec_one_alt -lrt
+	./digitrec_one_alt
+
+dummy: dummy.cpp dummy_host.cpp
+	@echo "Compiling & simulating the dummy on amdpool ..."
+	g++ ${CFLAGS} $^ -o dummy_host -lrt
+	./dummy_host
 
 bitstream: 
 	@echo "Synthesizing digitrec and creating bitstream on amdpool ..."
-	vivado_hls -f run_pipeline.tcl
+	vivado_hls -f run_alt.tcl
 	./run_bitstream.sh
 
 clean:

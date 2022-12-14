@@ -37,6 +37,7 @@ pixel otsu(int histogram[]) {
     weighted_sum = 0;
     for (int i = 0; i < 256; i++) {
         weighted_sum += i * histogram[i];
+        //printf("histogram[i] = %d\n", histogram[i]);
     }
 
     q1 = 0.0f;
@@ -56,7 +57,7 @@ pixel otsu(int histogram[]) {
         intermediate_sum += i * histogram[i];
         mu1 = intermediate_sum / q1;
         mu2 = (weighted_sum - intermediate_sum) / q2;
-
+        //printf("variance = %f, max variance = %f\n", variance, max_variance);
         // Minimize intra-class variance = maximize inter-class variance
         variance = q1 * q2 * (mu1 - mu2)*(mu1 - mu2) ;
         if (variance >= max_variance) {
@@ -64,7 +65,7 @@ pixel otsu(int histogram[]) {
             max_variance = variance;
         }
     }
-
+    //printf("threshold = %d\n", threshold);
     return threshold;
 }
 

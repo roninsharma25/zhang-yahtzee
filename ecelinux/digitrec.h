@@ -9,15 +9,11 @@
 #include<hls_stream.h>
 
 #include "typedefs.h"
-#include "otsu.h"
 
 // Top function for synthesis
 void dut(
     hls::stream<bit32_t> &strm_in,
-    hls::stream<pixel> &strm_out,
-    int rows,
-    int cols,
-    int otsu_mode
+    hls::stream<pixel> &strm_out
 );
 
 #endif
