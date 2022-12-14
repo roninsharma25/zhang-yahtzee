@@ -33,6 +33,13 @@ void dut(
   hls::stream<pixel> &strm_out
 )
 {
+
+  #pragma HLS array_partition variable=un_classW block factor=4
+  #pragma HLS array_partition variable=un_class block factor=4
+//  #pragma HLS array_partition variable=label block factor=8
+//  #pragma HLS array_partition variable=size
+//  #pragma HLS array_partition variable=dice_value
+
   int N = (ROW*COL)/4;
 
   for(int m = 0; m<256; m++){
@@ -56,10 +63,8 @@ void dut(
     } 
     pixel connected_c;
     pixel connected_cW;
-    int out_c;
 
     for (int i = 3; i >= 0; i--){
-      #pragma HLS pipeline
       in_buffer(COL+1,1) = in_buffer(COL,0);
       in_buffer[0] = threshold_bit[i];
       out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
@@ -83,7 +88,6 @@ void dut(
     int name = un_class[k];
     //printf("iteration: %d black name : %d\n", k, name);
     for (int m= 0; m<255; m++){
-      #pragma HLS unroll
       if(name == un_class[m] && m<k){
         add = 0;
         if(add2){
@@ -103,7 +107,6 @@ void dut(
   }
   int count = 0;
   for (int l = 0; l<256; l++){
-    #pragma HLS unroll
     if(dice_value[l]>0){
       bit32_t output = 0;
       output(3, 0) = dice_value[l];
