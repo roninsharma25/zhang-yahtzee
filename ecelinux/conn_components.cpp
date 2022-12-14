@@ -1,7 +1,7 @@
 // Reference: https://www.codeproject.com/Articles/825200/An-Implementation-Of-The-Connected-Component-Label
 
 #include <stdio.h>
-#include "conn_components.h"
+#include "conn_components_base.h"
 #include <cassert> 
 
 pixel labelNoB = 1;
@@ -29,7 +29,7 @@ int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixe
 
 }
 
-pixel conn_comp_1st_pass_black(buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y, pixel label[256], buf_8 out_bufferW) {
+pixel conn_comp_1st_pass_black(base_buf_bit in_buffer, base_buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y, pixel label[256], base_buf_8 out_bufferW) {
   bit in = in_buffer[0];
   if (in == 1) return 0;
   if (x == 0 && y == 0 ) labelNoB = 1;
@@ -64,7 +64,7 @@ pixel conn_comp_1st_pass_black(buf_bit in_buffer, buf_8 *out_buffer, pixel un_cl
   return outputB;
 }
 
-pixel conn_comp_1st_pass_white( buf_bit in_buffer, buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y) {
+pixel conn_comp_1st_pass_white( base_buf_bit in_buffer, base_buf_8 *out_buffer, pixel un_class[256], int width, int height, int x, int y) {
   bit in = in_buffer[0];
   if (in == 0) return 0;
   if (x == 0 && y == 0) labelNoW = 1;

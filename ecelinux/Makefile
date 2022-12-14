@@ -26,7 +26,7 @@ csim_alt: digitrec_alt.cpp digitrec_test.cpp otsu.cpp conn_components_alt.cpp
 	g++ ${CFLAGS} $^ -o digitrec_alt -lrt
 	./digitrec_alt
 
-csim_one_base: digitrec.cpp digitrec_test_one.cpp conn_components.cpp
+csim_one_base: digitrec.cpp digitrec_base_test_one.cpp otsu.cpp conn_components.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
 	g++ ${CFLAGS} $^ -o digitrec_one -lrt
 	./digitrec_one

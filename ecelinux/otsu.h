@@ -1,6 +1,6 @@
 
 #ifndef NUM_PIXELS
-#define NUM_PIXELS 44100
+#define NUM_PIXELS 168100
 #endif
 
 #include "typedefs.h"

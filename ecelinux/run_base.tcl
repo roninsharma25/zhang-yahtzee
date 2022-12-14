@@ -16,7 +16,7 @@ set_top dut
 add_files digitrec.cpp
 add_files otsu.cpp
 add_files conn_components.cpp
-add_files -tb digitrec_test.cpp
+add_files -tb digitrec_base_test_one.cpp
 add_files -tb data
 
 open_solution "solution1"
@@ -31,9 +31,9 @@ create_clock -period 10
 ############################################
 
 # Simulate the C++ design
-#csim_design
+csim_design
 # Synthesize the design
 csynth_design
 # Co-simulate the design
-#cosim_design
+cosim_design
 exit

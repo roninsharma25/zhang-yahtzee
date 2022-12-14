@@ -8,6 +8,8 @@
 #define AP_INT_MAX_W 4000
 #define COL 210//410
 #define ROW 210
+#define BASE_COL 410
+#define BASE_ROW 410
 
 #include "ap_int.h"
 
@@ -25,5 +27,10 @@ typedef ap_uint<COL+5> buf_bit;
 typedef ap_uint<(COL+5)*8> buf_8;
 typedef ap_uint<(COL+2)*6> buf_6;
 typedef ap_uint<(COL+2)*3> buf_3;
+
+typedef ap_uint<BASE_COL+5> base_buf_bit;
+typedef ap_uint<(BASE_COL+5)*8> base_buf_8;
+typedef ap_uint<(BASE_COL+2)*6> base_buf_6;
+typedef ap_uint<(BASE_COL+2)*3> base_buf_3;
 
 #endif

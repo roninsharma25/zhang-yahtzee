@@ -55,7 +55,7 @@ int main()
   // Read input file for the testing set
   std::string line;
   //std::ifstream myfile ("data/output_formatted.txt");
-  std::ifstream myfile ("data/5d_1_4_3_5_3.txt");
+  std::ifstream myfile ("data/5d_1_4_3_5_3_410.txt");
   
   // HLS streams for communicating with the cordic block
   hls::stream<bit32_t> in_stream;
@@ -66,7 +66,6 @@ int main()
   std::string subset2 = test_str.substr(0,1);
   int num_digits = atoi(subset2.c_str());
   int dice_values[num_digits];
-  int received_dice_values[num_digits];
 
   int current_index = 3;
   for (int i = 0; i < num_digits; i++) {
@@ -83,7 +82,7 @@ int main()
   // Number of test instances
 
  // const int N = 42025;
- const int N = (ROW * COL) /4;
+  const int N = 42025;
 
   
   // Arrays to store test data and expected results
@@ -121,6 +120,12 @@ int main()
       in_stream.write( input_lo );
     }
     
+    for (int i = 0; i < N; ++i ) {
+      // Read input from array and split into two 32-bit words
+      bit32_t input_lo = inputs[i].range(31,0);
+      // Write words to the device
+      in_stream.write( input_lo );
+    }
     // //--------------------------------------------------------------------
     // // Execute the digitrec sim and receive data
     // //--------------------------------------------------------------------
@@ -129,6 +134,10 @@ int main()
 
     dut( in_stream, out_stream);
 
+    pixel threshold_value = out_stream.read();
+    printf("threshold value: %d \n", threshold_value.to_int());
+
+
     // Analyze the outputs
     int count = 0;
     int num_correct = 0;
@@ -136,7 +145,7 @@ int main()
 
     for (int i = 0; i < num_digits; ++i ) {
       int dice_num = out_stream.read();
-      received_dice_values[i] = dice_num;
+      printf("Dice Classification: %d \n", dice_num);
 
       if (dice_num == dice_values[i]) {
         num_correct++;
@@ -144,15 +153,11 @@ int main()
       num_tests++;
     }
 
-    timer.stop();
-
-    for(int i = 0; i < num_digits; i++)
-      printf("Dice Classification: %d \n", received_dice_values[i]);
-    
     std::cout << "Overall Accuracy Rate = " << std::setprecision(3)
               << ( (double)num_correct / num_tests ) * 100
               << "% \n";
 
+    timer.stop();
     
     // Close input file for the testing set
     myfile.close();
