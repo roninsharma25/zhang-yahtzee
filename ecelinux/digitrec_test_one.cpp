@@ -1,7 +1,7 @@
 //=========================================================================
 // testbench.cpp
 //=========================================================================
-// @brief: testbench for k-nearest-neighbor digit recongnition application
+// @brief: testbench for dice digit recongnition application
 
 #include <stdio.h>
 #include <iostream>
@@ -34,19 +34,6 @@ int main()
   DIR *dr;
   struct dirent *en;
   dr = opendir("data");
-
-  //if (dr) {
-  //  // Loop through all files in the directory
-  //  while ((en = readdir(dr)) != NULL) {
-  //    std::string s = en->d_name;
-  //    if (s.find("txt") != std::string::npos) {
-  //      std::cout << s << "\n";
-//
-//
-  //    }
-  //  }
-  //  closedir(dr);
-  // }
       
   // Output file that saves the test bench results
   std::ofstream outfile;
@@ -83,8 +70,8 @@ int main()
   // Number of test instances
 
  // const int N = 42025;
- const int N = (ROW * COL) /4;
-
+  const int N = (ROW * COL) / 4;
+  printf("N: %d \n", N);
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
@@ -98,8 +85,6 @@ int main()
 
   if ( myfile.is_open() ) {
     assert( std::getline( myfile, line) );
-    // std::string row_string = line.substr(0, line.find(","));
-    // std::string col_string = line.substr(line.find(", "), line.length());
     for (int i = 0; i < N; ++i) {
       assert( std::getline( myfile, line) );
       // Read handwritten digit input

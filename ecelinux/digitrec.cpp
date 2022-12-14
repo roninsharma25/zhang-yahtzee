@@ -1,8 +1,8 @@
 //==========================================================================
 //digitrec.cpp
 //==========================================================================
-// @brief: A k-nearest-neighbor implementation for digit recognition (k=1)
-//data flow pipeline
+// @brief: A digit recognition system for dice
+
 #include "digitrec.h"
 #include "otsu.h"
 #include "conn_components_base.h"
@@ -42,8 +42,6 @@ void dut(
   }
 
   threshold_value = otsu(histogram);
-  //printf("threshold = %d\n", threshold_value.to_int());
-  //printf("threshold value: %d\n", threshold_value.to_int());
   strm_out.write(threshold_value);
 
   for(int m = 0; m<256; m++){
@@ -98,7 +96,6 @@ void dut(
     }
     if(add){
       black_dots++;
-      //printf("black dot size %d\n", size[k]);
       bool cont = size[k]>10 && size[k]<100;
       pixel next_W = un_classW[label[name]];
       if(next_W != 0 && cont){
@@ -106,7 +103,7 @@ void dut(
       }
     }
   }
-  //printf("black dots %d", black_dots);
+
   int count = 0;
   for (int l = 0; l<256; l++){
     if(dice_value[l]>0){

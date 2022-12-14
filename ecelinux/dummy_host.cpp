@@ -1,7 +1,7 @@
 //=========================================================================
 // testbench.cpp
 //=========================================================================
-// @brief: testbench for k-nearest-neighbor digit recongnition application
+// @brief: testbench for dummy host
 
 #include <stdio.h>
 #include <iostream>
@@ -47,7 +47,7 @@ int main()
   }
 
   std::string line;
-  //std::ifstream myfile ("data/output_formatted.txt");
+
   std::ifstream myfile ("small_data/5d_3_2_2_4_3.txt");
 
   std::string test_str = "5d_3_2_2_4_3.txt";
@@ -76,8 +76,6 @@ int main()
 
   if ( myfile.is_open() ) {
     assert( std::getline( myfile, line) );
-    // std::string row_string = line.substr(0, line.find(","));
-    // std::string col_string = line.substr(line.find(", "), line.length());
     for (int i = 0; i < N; ++i) {
       assert( std::getline( myfile, line) );
       // Read handwritten digit input

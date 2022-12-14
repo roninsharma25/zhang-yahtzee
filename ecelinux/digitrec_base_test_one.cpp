@@ -1,7 +1,7 @@
 //=========================================================================
 // testbench.cpp
 //=========================================================================
-// @brief: testbench for k-nearest-neighbor digit recongnition application
+// @brief: testbench for dice digit recognition application
 
 #include <stdio.h>
 #include <iostream>
@@ -34,19 +34,6 @@ int main()
   DIR *dr;
   struct dirent *en;
   dr = opendir("data");
-
-  //if (dr) {
-  //  // Loop through all files in the directory
-  //  while ((en = readdir(dr)) != NULL) {
-  //    std::string s = en->d_name;
-  //    if (s.find("txt") != std::string::npos) {
-  //      std::cout << s << "\n";
-//
-//
-  //    }
-  //  }
-  //  closedir(dr);
-  // }
       
   // Output file that saves the test bench results
   std::ofstream outfile;

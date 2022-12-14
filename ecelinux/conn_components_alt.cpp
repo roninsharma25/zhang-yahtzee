@@ -12,13 +12,11 @@ pixel outputW;
 int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixel labelC, pixel labelD, pixel un_class[256], bit type) {
   
   if ( (A == type) && ((labelA <= labelB) || B == !type) && ((labelA <= labelC) || C == !type) && ((labelA <= labelD) || D == !type )) {
-    //printf("s");
     if (type) {
       outputW = labelA;
     } else {
       outputB = labelA;
     }
-    //outputB = labelA;
 
     if (B == type && un_class[labelB] < labelA && un_class[labelB] != 0) labelA = un_class[labelB]; 
     if (C == type && un_class[labelC] < labelA && un_class[labelC] != 0) labelA = un_class[labelC]; 
@@ -28,13 +26,6 @@ int un_class_method(bit A, bit B, bit C, bit D, pixel labelA, pixel labelB, pixe
     if (C == type && (un_class[labelC] > labelA || un_class[labelC] == 0)) un_class[labelC] = labelA;
     if (D == type && (un_class[labelD] > labelA || un_class[labelD] == 0)) un_class[labelD] = labelA;
 
-    //std::cout << "bit A " << A << " label A " << labelA << std::endl;
-    //std::cout << "bit B " << B << " label B " << labelB << std::endl;
-    //std::cout << "bit C " << C << " label C " << labelC << std::endl;
-    //std::cout << "bit D " << D << " label D " << labelD << std::endl;
-    //std::cout << "unclass B " << un_class[labelB] << std::endl; 
-    //std::cout << "unclass C " << un_class[labelC] << std::endl; 
-    //std::cout << "unclass D " << un_class[labelD] << std::endl; 
     return 0;
   }
 
@@ -55,19 +46,13 @@ void link_pixel (buf_bit in_buffer, buf_8 *clas_buffer, pixel un_class[256], int
   pixel labelC = (*clas_buffer)( (width+1)*8+7, (width+1)*8 );
   pixel labelD = (*clas_buffer)( (width-1)*8+7, (width-1)*8 );
 
-
-  //std::cout << "bit A " << A << " label A " << labelA << std::endl;
-  //std::cout << "bit B " << B << " label B " << labelB << std::endl;
-  //std::cout << "bit C " << C << " label C " << labelC << std::endl;
-  //std::cout << "bit D " << D << " label D " << labelD << std::endl;
-
   int option_1 = un_class_method(A, B, C, D, labelA, labelB, labelC, labelD, un_class, type);
   int option_2 = 0; 
   int option_3 = 0;
   if (option_1) option_2 = un_class_method(B, A, C, D, labelB, labelA, labelC, labelD, un_class, type);
   if (option_1 && option_2) option_3 = un_class_method(C, A, B, D, labelC, labelA, labelB, labelD, un_class, type);
   if (option_1 && option_2 && option_3) un_class_method(D, A, B, C, labelD, labelA, labelB, labelC, un_class, type);
-  //printf("option 1: %d , option 2: %d, option 3: %d\n", option_1, option_2, option_3);
+
   return;
 }
 

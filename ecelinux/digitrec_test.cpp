@@ -1,7 +1,7 @@
 //=========================================================================
 // testbench.cpp
 //=========================================================================
-// @brief: testbench for k-nearest-neighbor digit recongnition application
+// @brief: testbench for dice digit recongnition application
 
 #include <stdio.h>
 #include <iostream>
@@ -35,6 +35,7 @@ void run_algorithm(string file_name) {
   // Output file that saves the test bench results
   ofstream outfile;
   outfile.open("output/out_conn_comp.txt");
+  cout << file_name << "\n";
   
   // Read input file for the testing set
   string line;
@@ -49,7 +50,7 @@ void run_algorithm(string file_name) {
   string subset2 = file_name.substr(0,1);
   int num_digits = atoi(subset2.c_str());
   int dice_values[num_digits];
-  int dice_values_acc[6] = {0, 0, 0, 0, 0, 0};
+  int dice_values_acc[7] = {0, 0, 0, 0, 0, 0};
 
   int current_index = 3;
   for (int i = 0; i < num_digits; i++) {
@@ -75,8 +76,6 @@ void run_algorithm(string file_name) {
   int nbytes;
   int error = 0;
   int num_test_insts = 0;
-  int rows = 410;
-  int cols = 410;
   bit32_t threshold_value;
 
 
@@ -99,18 +98,11 @@ void run_algorithm(string file_name) {
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
       bit32_t input_lo = inputs[i].range(31,0);
-      // Write words to the device
-      //in_stream.write( input_lo );
     }
 
     //--------------------------------------------------------------------
     // Execute the digitrec sim and receive data
     //--------------------------------------------------------------------
-    //dut( in_stream, out_stream, 0, 0, 1);
-
-    //pixel threshold_value = out_stream.read();
-
-    //printf("threshold value: %d \n", threshold_value.to_int());
 
     for (int i = 0; i < N; ++i ) {
       // Read input from array and split into two 32-bit words
@@ -119,7 +111,7 @@ void run_algorithm(string file_name) {
       in_stream.write( input_lo );
     }
 
-    dut( in_stream, out_stream, rows, cols );
+    dut( in_stream, out_stream );
 
     // Analyze the outputs
     for (int i = 0; i < num_digits; ++i ) {
@@ -153,7 +145,7 @@ void run_algorithm(string file_name) {
 //------------------------------------------------------------------------
 // Digitrec testbench
 //------------------------------------------------------------------------
-int main() 
+int main()
 {
   DIR *dr;
   struct dirent *en;
@@ -166,7 +158,7 @@ int main()
       if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
-        if (count2 >= 10) break;
+        //if (count2 >= 10) break;
       }
     }
     closedir(dr);

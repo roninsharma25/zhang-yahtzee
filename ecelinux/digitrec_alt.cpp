@@ -1,8 +1,7 @@
 //==========================================================================
-//digitrec.cpp
+//digitrec_alt.cpp
 //==========================================================================
-// @brief: A k-nearest-neighbor implementation for digit recognition (k=1)
-//data flow pipeline
+// @brief: A digit recognition system for dice
 
 #include <stdio.h>
 #include <iostream>
