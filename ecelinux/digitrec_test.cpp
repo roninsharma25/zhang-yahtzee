@@ -35,7 +35,6 @@ void run_algorithm(string file_name) {
   // Output file that saves the test bench results
   ofstream outfile;
   outfile.open("output/out_conn_comp.txt");
-  cout << file_name << "\n";
   
   // Read input file for the testing set
   string line;
@@ -50,7 +49,7 @@ void run_algorithm(string file_name) {
   string subset2 = file_name.substr(0,1);
   int num_digits = atoi(subset2.c_str());
   int dice_values[num_digits];
-  int dice_values_acc[7] = {0, 0, 0, 0, 0, 0};
+  int dice_values_acc[6] = {0, 0, 0, 0, 0, 0};
 
   int current_index = 3;
   for (int i = 0; i < num_digits; i++) {

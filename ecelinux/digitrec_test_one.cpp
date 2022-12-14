@@ -64,14 +64,10 @@ int main()
   for (int i = 0; i < num_digits; i++) {
     printf("INPUT NUM: %d \n", dice_values[i]);
   }
-
-
-
   // Number of test instances
 
- // const int N = 42025;
+  // const int N = 42025;
   const int N = (ROW * COL) / 4;
-  printf("N: %d \n", N);
   
   // Arrays to store test data and expected results
   bit32_t inputs[N];
