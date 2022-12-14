@@ -8,7 +8,7 @@
 #include <fstream>
 #include <string>
 
-#include "dummy.h"
+#include "typedefs.h"
 #include "timer.h"
 
 #include <dirent.h>
@@ -32,89 +32,67 @@ int64_t hexstring_to_int64 (std::string h) {
 int main() 
 {
  
-  DIR *dr;
-  struct dirent *en;
-  dr = opendir("small_data");
-  if (dr) {
-    // Loop through all files in the directory
-    while ((en = readdir(dr)) != NULL) {
-      std::string s = en->d_name;
-      if (s.find("txt") != std::string::npos) {
-        std::cout << s << "\n";
-      }
-    }
-    closedir(dr);
+  Timer timer("dummy");
+  int N = 42025;
+  int nbytes;
+  int error = 0;
+  int num_test_insts = 0;
+  int realsum = 0;
+  int num_digits = 7;
+  int num_correct = 0;
+  int num_tests = 0;
+
+  for (int i = 0; i < N; ++i ) {
+    realsum = realsum + i;
   }
 
-  std::string line;
+  timer.start();
 
-  std::ifstream myfile ("small_data/5d_3_2_2_4_3.txt");
+  //--------------------------------------------------------------------
+  // Add your code here to communicate with the hardware module
+  //--------------------------------------------------------------------
 
-  std::string test_str = "5d_3_2_2_4_3.txt";
 
-  std::string subset2 = test_str.substr(0,1);
-  int num_digits = atoi(subset2.c_str());
-  int dice_values[num_digits];
-
-  int current_index = 3;
-  for (int i = 0; i < num_digits; i++) {
-    dice_values[i] = atoi(test_str.substr(current_index, 1).c_str());
-    current_index += 2;
+  for (int i = 0; i < N; ++i ) {
+    // Read input from array and split into two 32-bit words
+    bit32_t input_lo = i;
+    // Write words to the device
+    nbytes = write (fdw, (void*)&input_lo, sizeof(input_lo));
+    assert(nbytes == sizeof(input_lo));
   }
 
-  // HLS streams for communicating with the cordic block
-  hls::stream<bit32_t> in_stream;
-  hls::stream<bit32_t> out_stream;
-
-  const int N = 11025;
-
-  // Arrays to store test data and expected results
-  bit32_t inputs[N];
-
-  // Timer
-  Timer timer("digitrec FPGA");
-
-  if ( myfile.is_open() ) {
-    assert( std::getline( myfile, line) );
-    for (int i = 0; i < N; ++i) {
-      assert( std::getline( myfile, line) );
-      // Read handwritten digit input
-      std::string hex_digit = line.substr(2);
-      bit32_t input_digit = hexstring_to_int64 (hex_digit);
-      // Store the digits into arrays
-      inputs[i] = input_digit;
+  for (int i = 0; i < num_digits; ++i ) {
+    bit32_t dice_num;
+    nbytes = read (fdr, (void*)&dice_num, sizeof(dice_num));
+    assert (nbytes == sizeof(dice_num));
+    if (dice_num == realsum) {
+      num_correct++;
     }
-
-    timer.start();
-
-    //--------------------------------------------------------------------
-    // Send data digitrec
-    //--------------------------------------------------------------------
-
-    for (int i = 0; i < N; ++i ) {
-      // Read input from array and split into two 32-bit words
-      bit32_t input_lo = inputs[i];
-      // Write words to the device
-      in_stream.write( input_lo );
-    }
-
-    dut( in_stream, out_stream );
-
-    for (int i = 0; i < NUMDIE; i++){
-      int dice_num = out_stream.read();
-    }
-
-    timer.stop();
-    
-  
-
-    // Close input file for the testing set
-    myfile.close();
-  
+    num_tests++;
   }
-  else
-    std::cout << "Unable to open file for the testing set!" << std::endl; 
 
+  // for (int i = 0; i < sizeof(inputs), i++){
+  //   test_digit = inputs[i];
+
+  //   nbytes = write (fdw, (void*)&test_digit, sizeof(test_digit);
+  //   assert(nbytes == sizeof(test_digit));
+
+  //   int32_t guess_out;
+  //   nbytes = read (fdr, (void*)&guess_out, sizeof(guess_out));
+  //   assert (nbytes == sizeof(guess_out));
+
+  //   int guess_i = guess_out;
+  //   if(guess_i != expecteds[i]) error++;
+  // }  
+
+
+  timer.stop();
+
+  // Report overall error out of all testing instances
+  std::cout << "Overall Accuracy Rate = " << std::setprecision(3)
+            << ( (double)num_correct / num_tests ) * 100
+            << "% \n";
+ 
 
   return 0;
 }

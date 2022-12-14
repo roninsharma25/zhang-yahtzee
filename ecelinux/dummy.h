@@ -7,14 +7,14 @@
 #define DUMMY_H
 
 #ifndef PIXELS
-#define PIXELS 11025
+#define PIXELS 42025
 #endif
 
 #ifndef NUMDIE
 #define NUMDIE 7
 #endif
 
-#include<hls_stream.h>
+#include <hls_stream.h>
 #include "typedefs.h"
 
 void dut(

@@ -14,7 +14,7 @@ set_top dut
 
 # Add design and testbench files
 add_files dummy.cpp
-add_files -tb dummy_host.cpp
+add_files -tb dummy_tb.cpp
 
 open_solution "solution1"
 # Use Zynq device
@@ -28,9 +28,9 @@ create_clock -period 10
 ############################################
 
 # Simulate the C++ design
-#csim_design
+csim_design
 # Synthesize the design
 csynth_design
 # Co-simulate the design
-#cosim_design
+cosim_design
 exit
