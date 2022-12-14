@@ -34,7 +34,7 @@ csim_one_base: digitrec.cpp digitrec_base_test_one.cpp otsu.cpp conn_components.
 csim_one_alt: digitrec_alt.cpp digitrec_test_one.cpp conn_components_alt.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
 	g++ ${CFLAGS} $^ -o digitrec_one_alt -lrt
-	./digitrec_two
+	./digitrec_one_alt
 
 csim_one: digitrec.cpp digitrec_test_one.cpp otsu.cpp conn_components.cpp
 	@echo "Compiling & simulating digitrec on amdpool ..."
