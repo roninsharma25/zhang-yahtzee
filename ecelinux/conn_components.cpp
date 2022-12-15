@@ -130,7 +130,7 @@ void mergeW( buf_8 maW, buf_8 mbW, buf_bit mid_b, buf_bit mid_a, pixel un_classW
   for(int i = 0; i<410;i++){
     if(mid_a[i] && mid_b[i]&& branch){
       int index = un_classW[(int)maW(i*8+7,i*8)];
-      un_classW[index] = un_classW[(int)maW(i*8+7,i*8)];
+      un_classW[index] = un_classW2[(int)mbW(i*8+7,i*8)];
       branch = 0;
     }
     else if(branch == 0 && mid_a[i]==0){

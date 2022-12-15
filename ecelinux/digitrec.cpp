@@ -61,6 +61,7 @@ void dut(
     row_value = 0;
     row_value2 = 205;
     column_value = 0;
+    column_value2 = 0;
     first = 1;
     count = 0;
     otsu_mode = 1;
@@ -86,6 +87,7 @@ void dut(
     //buf_8 mid_aB = 0;
     buf_8 mid_bW = 0;
     buf_bit mid_bval = 0;
+    buf_8 check = 0;
     //buf_8 mid_aW = 0;
     for(int m = 0; m<256; m++){
       un_class[m] = 0;
@@ -99,6 +101,7 @@ void dut(
       size2[m] = 0;
     }
     for(int j = 0; j < 42025; j++){
+      #pragma unroll
       if(j == 206){
         mid_bB = out_buffer2;
         mid_bW = out_bufferW2;
@@ -108,6 +111,7 @@ void dut(
       bit32_t input_lo = strm_in.read();
       // Update the histogram
       for(int i = 3; i >= 2; i--){
+        #pragma unroll
         pixel chunk = input_lo((i << 3) + 7, (i << 3));
         bit threshold_bit = threshold_image(chunk, threshold_value);
 
@@ -120,7 +124,13 @@ void dut(
         out_buffer((COL+1)*8 + 7,8) = out_buffer((COL)*8 + 7,0);
         out_bufferW((COL+1)*8 + 7,8) = out_bufferW((COL)*8 + 7,0);
         connected_cW = conn_comp_1st_pass_white(in_buffer, &out_bufferW, un_classW, COL, ROW, column_value, row_value, &labelNoW);
+        //printf(" %d,   ", (int)labelNoW);
+        
         out_bufferW(7,0) = connected_cW;
+        //if(j = 42024){
+        //  //printf("%d ,  ", (int)connected_cW);
+        //  check = out_bufferW;
+        //}
         connected_c = conn_comp_1st_pass_black(in_buffer, &out_buffer, un_class, COL, ROW, column_value, row_value, label, out_bufferW, &labelNoB);
         out_buffer(7,0) = connected_c;
         size[connected_c] +=1;
@@ -132,22 +142,21 @@ void dut(
 
       }
       for(int i = 1; i >= 0; i--){
+        #pragma unroll
         pixel chunk = input_lo((i << 3) + 7, (i << 3));
         bit threshold_bit = threshold_image(chunk, threshold_value);
-
         // Connected components
-        pixel connected_c;
-        pixel connected_cW;
-        int out_c;
+        pixel connected_c2;
+        pixel connected_cW2;
         in_buffer2(COL+1,1) = in_buffer2(COL,0);
         in_buffer2[0] = threshold_bit;
         out_buffer2((COL+1)*8 + 7,8) = out_buffer2((COL)*8 + 7,0);
         out_bufferW2((COL+1)*8 + 7,8) = out_bufferW2((COL)*8 + 7,0);
-        connected_cW = conn_comp_1st_pass_white(in_buffer2, &out_bufferW2, un_classW2, COL, ROW, column_value2, row_value2, &labelNoW2);
-        out_bufferW2(7,0) = connected_cW;
-        connected_c = conn_comp_1st_pass_black(in_buffer2, &out_buffer2, un_class2, COL, ROW, column_value2, row_value2, label2, out_bufferW2, &labelNoB2);
-        out_buffer2(7,0) = connected_c;
-        size2[connected_c] +=1;
+        connected_cW2 = conn_comp_1st_pass_white(in_buffer2, &out_bufferW2, un_classW2, COL, ROW, column_value2, row_value2, &labelNoW2);
+        out_bufferW2(7,0) = connected_cW2;
+        connected_c2 = conn_comp_1st_pass_black(in_buffer2, &out_buffer2, un_class2, COL, ROW, column_value2, row_value2, label2, out_bufferW2, &labelNoB2);
+        out_buffer2(7,0) = connected_c2;
+        size2[connected_c2] +=1;
         column_value2 += 1;
         if (column_value2 >= COL) {
           row_value2+=1;
@@ -155,8 +164,18 @@ void dut(
         }
       }
     }
+    //for(int i = 0; i<410; i++){
+    //  //printf("bottum middle class %d\n", (int)mid_bW[i]);
+    //  if(out_bufferW(i*8+7, i*8) !=0 ){//
+    //    printf("upper middle class %d\n//",(int)out_bufferW(i*8+7, i*8));
+    //  }//
+    //  
+    //  //if(mid_bW[i] == 155){
+    //  //  printf("----------------------------------------");
+    //  //}
+    //}
     mergeW( out_bufferW, mid_bW, mid_bval, in_buffer, un_classW, un_classW2);
-    mergeB( out_buffer, out_buffer2, mid_bval, in_buffer, size, size2 );
+    //mergeB( out_buffer, out_buffer2, mid_bval, in_buffer, size, size2 );
     //two input buffers
     //four output buffers
     //two un_class
@@ -200,16 +219,19 @@ void dut(
       if(add){
         black_dots++;
         //printf("black dot size %d\n", size[k]);
-        bool cont = size[k]>10 && size[k]<100;
-        pixel next_W = un_classW[label[name]];
+        bool cont = size[k]>6 && size[k]<100;
+        int ind = un_classW[label[name]];
+        pixel next_W = un_classW[ind];
         if(next_W != 0 && cont){
+          //printf("size is %d\n",size[k]);
           dice_value[next_W] +=1;
         }
       }
       if(add2){
-        bool cont = size2[k]>10 && size2[k]<100;
+        bool cont = size2[k]>6 && size2[k]<100;
         pixel next_W = un_classW2[label2[name]];
         if(next_W != 0 && cont){
+          //printf("size is %d\n",size2[k]);
           dice_value[next_W] +=1;
         }
       }
@@ -217,11 +239,23 @@ void dut(
     
     //printf("black dots %d", black_dots);
     int count = 0;
+    //int save = 0;
     for (int l = 0; l<256; l++){
       if(dice_value[l]>0){
+        //if(dice_value[l] == 1){
+        //  //printf("white class is %d\n", l);
+        //  save +=1;
+        //}
+        //else{
         strm_out.write(dice_value[l]);
+        //}
+        
+        //printf("%d\n",dice_value[l]);
         count++;
       }
     }
+    //for (int m = 0; m<save; m++){
+    //  strm_out.write(1);
+    //}
   }
 }

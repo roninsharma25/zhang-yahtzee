@@ -114,10 +114,15 @@ void run_algorithm(string file_name) {
 
     printf("threshold value: %d \n", threshold_value.to_int());
 
-    for (int i = 0; i < N; ++i ) {
+    for (int i = 0; i < N/2; ++i ) {
       // Read input from array and split into two 32-bit words
-      bit32_t input_lo = inputs[i].range(31,0);
+      bit32_t input_lo;
+      input_lo(31,16) = inputs[i].range(15,0);
+      input_lo(15,0) = inputs[i+205].range(15,0);
       // Write words to the device
+      in_stream.write( input_lo );
+      input_lo(31,16) = inputs[i].range(31,16);
+      input_lo(15,0) = inputs[i+205].range(31,16);
       in_stream.write( input_lo );
     }
 
@@ -168,7 +173,7 @@ int main()
       if (file_name.find("txt") != string::npos) {
         run_algorithm(file_name);
         count2++;
-        if (count2 >= 50) break;
+        if (count2 >= 2) break;
       }
     }
     closedir(dr);
